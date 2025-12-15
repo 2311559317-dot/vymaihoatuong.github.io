@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Master AI - Cách Viết CV Phù Hợp Với Nhà Tuyển Dụng</title>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- PDF.js & Mammoth.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <script>
+        // Cấu hình worker cho PDF.js sau khi thư viện đã tải
+        if (typeof pdfjsLib !== 'undefined') {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Nunito', sans-serif; background-color: #f0f9ff; scroll-behavior: smooth; }
+        
+        .medical-gradient-text {
+            background: linear-gradient(to right, #0284c7, #0ea5e9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid #bae6fd;
+            box-shadow: 0 4px 6px -1px rgba(14, 165, 233, 0.1), 0 2px 4px -1px rgba(14, 165, 233, 0.06);
+        }
+
+        .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .upload-zone {
+            background-color: #f0f9ff;
+            background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='16' ry='16' stroke='%233B82F6' stroke-width='2' stroke-dasharray='12%2c 12' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+            transition: all 0.3s ease;
+        }
+        .upload-zone:hover { background-color: #e0f2fe; border-color: #0284c7; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        
+        // --- DATA ---
+        const PROVINCES = [
+            "An Giang", "Bà Rịa - Vũng Tàu", "Bắc Giang", "Bắc Kạn", "Bạc Liêu", "Bắc Ninh", "Bến Tre", 
+            "Bình Định", "Bình Dương", "Bình Phước", "Bình Thuận", "Cà Mau", "Cao Bằng", "Cần Thơ", 
+            "Đà Nẵng", "Đắk Lắk", "Đắk Nông", "Điện Biên", "Đồng Nai", "Đồng Tháp", "Gia Lai", "Hà Giang", 
+            "Hà Nam", "Hà Nội", "Hà Tĩnh", "Hải Dương", "Hải Phòng", "Hậu Giang", "Hòa Bình", "Hưng Yên", 
+            "Khánh Hòa", "Kiên Giang", "Kon Tum", "Lai Châu", "Lâm Đồng", "Lạng Sơn", "Lào Cai", "Long An", 
+            "Nam Định", "Nghệ An", "Ninh Bình", "Ninh Thuận", "Phú Thọ", "Phú Yên", "Quảng Bình", "Quảng Nam", 
+            "Quảng Ngãi", "Quảng Ninh", "Quảng Trị", "Sóc Trăng", "Sơn La", "Tây Ninh", "Thái Bình", 
+            "Thái Nguyên", "Thanh Hóa", "Thừa Thiên Huế", "Tiền Giang", "TP. Hồ Chí Minh", "Trà Vinh", 
+            "Tuyên Quang", "Vĩnh Long", "Vĩnh Phúc", "Yên Bái"
+        ].sort((a, b) => a.localeCompare(b, 'vi'));
+
+        const REAL_HOSPITALS_DB = {
+            "Hà Nội": ["Bệnh viện Bạch Mai", "Bệnh viện Việt Đức", "Bệnh viện 108", "Bệnh viện Đại học Y", "Bệnh viện Thanh Nhàn", "Bệnh viện Xanh Pôn", "Vinmec Times City", "Bệnh viện Tâm Anh", "Bệnh viện E", "Bệnh viện Phụ sản TW"],
+            "TP. Hồ Chí Minh": ["Bệnh viện Chợ Rẫy", "Bệnh viện Từ Dũ", "Bệnh viện Đại học Y Dược", "Bệnh viện 115", "Bệnh viện Nhi đồng 1", "Bệnh viện Hùng Vương", "Bệnh viện Thống Nhất", "Bệnh viện 175"],
+            "Đà Nẵng": ["Bệnh viện Đà Nẵng", "Bệnh viện C", "Bệnh viện Hoàn Mỹ", "Bệnh viện Phụ sản - Nhi", "Bệnh viện Ung bướu"],
+            "Cần Thơ": ["BV Đa khoa Trung ương Cần Thơ", "BV Phụ sản Cần Thơ", "BV Nhi đồng Cần Thơ"],
+            "Hải Phòng": ["BV Hữu nghị Việt Tiệp", "BV Trẻ em Hải Phòng", "BV Phụ sản Hải Phòng", "BV Quốc tế Hải Phòng"]
+        };
+
+        const SPECIALTIES = [
+            { id: "da_khoa", name: "Điều dưỡng Đa khoa: Chăm sóc tổng quát" },
+            { id: "nhi", name: "Điều dưỡng Nhi khoa: Chăm sóc trẻ em" },
+            { id: "ho_sinh", name: "Điều dưỡng Hộ sinh: Sản phụ khoa" },
+            { id: "tam_than", name: "Điều dưỡng Tâm thần: Sức khỏe tâm thần" },
+            { id: "hoi_suc", name: "Điều dưỡng Hồi sức cấp cứu (ICU)" },
+            { id: "tim_mach", name: "Điều dưỡng Tim mạch, Hô hấp" },
+            { id: "ngoai", name: "Điều dưỡng Ngoại thần kinh" },
+            { id: "chuyen_khoa", name: "Điều dưỡng Tai Mũi Họng, Mắt, RHM" },
+            { id: "da_lieu", name: "Điều dưỡng Da liễu, Thẩm mỹ" }
+        ];
+
+        const JD_DATABASE = [
+            {
+                names: ["bạch mai", "bach mai"],
+                name: "Bệnh viện Bạch Mai",
+                type: "Công lập hạng đặc biệt",
+                jd: "Yêu cầu: Tốt nghiệp Đại học Điều dưỡng chính quy. CCHN đầy đủ. Tiếng Anh B1/Toeic 450+. Kỹ năng: Cấp cứu ngừng tuần hoàn, sử dụng máy thở. Chịu được áp lực cao, trực đêm 24/24. Ưu tiên nam giới hoặc sức khỏe tốt."
+            },
+            {
+                names: ["chợ rẫy", "cho ray"],
+                name: "Bệnh viện Chợ Rẫy",
+                type: "Công lập hạng đặc biệt",
+                jd: "Yêu cầu: Cử nhân Điều dưỡng chính quy. Có CCHN. Sức khỏe tốt (Loại I, II). Kinh nghiệm >1 năm tuyến tỉnh. Kỹ năng kiểm soát nhiễm khuẩn. Thái độ phục vụ nghiêm túc. Chấp nhận điều động."
+            },
+            {
+                names: ["việt đức", "viet duc"],
+                name: "Bệnh viện Hữu nghị Việt Đức",
+                type: "Ngoại khoa",
+                jd: "Yêu cầu Ngoại khoa: Nhanh nhẹn, thể lực tốt, chịu áp lực phòng mổ. Thành thạo quy trình vô khuẩn, dụng cụ phẫu thuật. Tốt nghiệp Cao đẳng trở lên. Ưu tiên kinh nghiệm phụ mổ, gây mê."
+            },
+            {
+                names: ["vinmec", "quốc tế vinmec"],
+                name: "Hệ thống Y tế Vinmec",
+                type: "Quốc tế",
+                jd: "Yêu cầu: Tốt nghiệp Đại học. Tiếng Anh giao tiếp tốt (Bắt buộc). Ngoại hình ưa nhìn, chuyên nghiệp. Kỹ năng CSKH xuất sắc. CCHN đầy đủ. Lương thưởng hấp dẫn."
+            }
+        ];
+
+        // --- 30 CÂU HỎI PHỎNG VẤN (5 Đáp án) ---
+        const INTERVIEW_QUESTIONS = [
+            { id: 1, question: "Khi thực hiện y lệnh dùng thuốc, '5 Đúng' bao gồm những gì?", options: ["A. Đúng người bệnh, đúng thuốc, đúng liều, đúng đường dùng, đúng thời gian.", "B. Đúng người bệnh, đúng giường, đúng thuốc, đúng giá tiền, đúng bác sĩ.", "C. Đúng thuốc, đúng liều, đúng bệnh, đúng người nhà, đúng giờ.", "D. Đúng người bệnh, đúng thuốc, đúng cách pha, đúng bơm tiêm, đúng giờ.", "E. Đúng tên, đúng tuổi, đúng địa chỉ, đúng thuốc, đúng bác sĩ kê đơn."], correct: 0, explain: "Đây là nguyên tắc vàng để đảm bảo an toàn người bệnh khi dùng thuốc." },
+            { id: 2, question: "Bệnh nhân ngã trong nhà vệ sinh, hành động ĐẦU TIÊN của bạn là gì?", options: ["A. Đỡ ngay bệnh nhân dậy đưa về giường.", "B. Chạy đi gọi bác sĩ ngay lập tức.", "C. Đánh giá nhanh tình trạng chấn thương và dấu hiệu sinh tồn tại chỗ trước khi di chuyển.", "D. La lớn để tìm người giúp đỡ.", "E. Gọi người nhà vào đỡ bệnh nhân."], correct: 2, explain: "Nguyên tắc an toàn: Không di chuyển bệnh nhân khi chưa loại trừ chấn thương cột sống/xương gãy." },
+            { id: 3, question: "Trong quy trình rửa tay thường quy, thời gian chà xát tay tối thiểu là bao lâu?", options: ["A. 10 giây", "B. 15 giây", "C. 20-30 giây", "D. 1 phút", "E. 2 phút"], correct: 2, explain: "Theo khuyến cáo của BYT và WHO, thời gian chà tay với dung dịch vệ sinh tay tối thiểu là 20-30 giây." },
+            { id: 4, question: "Khi bệnh nhân hoặc người nhà đang tức giận quát tháo, thái độ phù hợp nhất là:", options: ["A. Quát lại để họ im lặng vì đây là bệnh viện.", "B. Bỏ đi nơi khác để tránh xung đột.", "C. Giữ bình tĩnh, lắng nghe tích cực, thể hiện sự đồng cảm và giải thích nhẹ nhàng.", "D. Gọi bảo vệ ngay lập tức mà không nói gì.", "E. Mời họ ra khỏi phòng bệnh."], correct: 2, explain: "Kỹ năng giao tiếp và thấu cảm (Empathy) là cốt lõi để giải quyết khủng hoảng truyền thông y tế." },
+            { id: 5, question: "Dấu hiệu nào sau đây cảnh báo Sốc phản vệ cần xử trí ngay?", options: ["A. Đau tại chỗ tiêm.", "B. Mệt mỏi, buồn ngủ.", "C. Nổi mề đay, khó thở, huyết áp tụt nhanh, mạch nhanh nhỏ.", "D. Sốt nhẹ.", "E. Cảm giác đói bụng cồn cào."], correct: 2, explain: "Sốc phản vệ là tối cấp cứu, các dấu hiệu hô hấp và tuần hoàn là quan trọng nhất." },
+            { id: 6, question: "Khi lấy máu xét nghiệm, ga-rô (tourniquet) không nên buộc quá bao lâu?", options: ["A. 30 giây", "B. 1 phút", "C. 3 phút", "D. 5 phút", "E. 10 phút"], correct: 1, explain: "Buộc quá lâu (>1 phút) gây cô đặc máu, sai lệch kết quả xét nghiệm (tăng Kali, tan máu)." },
+            { id: 7, question: "Rác thải y tế LÂY NHIỄM (bông băng dính máu, dịch) được bỏ vào túi màu gì?", options: ["A. Màu Xanh", "B. Màu Trắng", "C. Màu Vàng", "D. Màu Đen", "E. Màu Cam"], correct: 2, explain: "Quy định phân loại rác: Vàng (Lây nhiễm), Xanh (Sinh hoạt), Trắng (Tái chế), Đen (Nguy hại không lây nhiễm)." },
+            { id: 8, question: "Bạn phát hiện mình vừa tiêm nhầm thuốc cho bệnh nhân (chưa có phản ứng xấu). Bạn sẽ làm gì?", options: ["A. Im lặng và theo dõi, nếu ổn thì thôi để tránh bị kỷ luật.", "B. Ghi lại vào hồ sơ là đã tiêm đúng thuốc.", "C. Báo cáo ngay cho bác sĩ điều trị và điều dưỡng trưởng, theo dõi sát bệnh nhân và lập biên bản sự cố.", "D. Tự ý tiêm thuốc giải độc.", "E. Nói nhỏ với đồng nghiệp thân thiết để nhờ giúp đỡ và giấu kín."], correct: 2, explain: "Trung thực và ưu tiên an toàn người bệnh là đạo đức nghề nghiệp cao nhất." },
+            { id: 9, question: "Vị trí ép tim đúng trong cấp cứu ngừng tuần hoàn (CPR) ở người lớn là:", options: ["A. Phía bên trái lồng ngực, chỗ mỏm tim.", "B. 1/2 dưới xương ức, chính giữa lồng ngực.", "C. Vùng thượng vị.", "D. Phía bên phải lồng ngực.", "E. Bất kỳ vị trí nào trên lồng ngực."], correct: 1, explain: "Vị trí chính xác giúp ép tim hiệu quả tống máu đi và hạn chế gãy xương sườn." },
+            { id: 10, question: "Câu hỏi tình huống: Bác sĩ ra y lệnh miệng trong tình huống KHÔNG cấp cứu. Bạn xử lý thế nào?", options: ["A. Thực hiện ngay vì bác sĩ là người ra lệnh.", "B. Từ chối thực hiện và yêu cầu bác sĩ ghi y lệnh vào hồ sơ bệnh án trước.", "C. Thực hiện rồi nhờ bác sĩ bổ sung hồ sơ sau.", "D. Nhờ đồng nghiệp khác thực hiện.", "E. Ghi âm lại lời bác sĩ rồi thực hiện."], correct: 1, explain: "Y lệnh miệng chỉ được chấp nhận trong tình huống cấp cứu tối khẩn cấp. Còn lại phải có văn bản để đảm bảo pháp lý." },
+            { id: 11, question: "Để phòng ngừa loét tỳ đè cho bệnh nhân nằm liệt giường, biện pháp quan trọng nhất là:", options: ["A. Dùng nhiều phấn rôm.", "B. Xoay trở tư thế bệnh nhân mỗi 2 giờ/lần.", "C. Cho uống nhiều vitamin C.", "D. Để bệnh nhân nằm yên tuyệt đối trên đệm nước.", "E. Massage vùng bị tỳ đè thật mạnh."], correct: 1, explain: "Xoay trở thường xuyên giúp giải phóng áp lực lên vùng da bị tỳ đè, phục hồi tuần hoàn máu." },
+            { id: 12, question: "Khi đo huyết áp, nếu chọn bao quấn (cuff) quá nhỏ so với bắp tay bệnh nhân thì kết quả sẽ thế nào?", options: ["A. Huyết áp đo được cao hơn thực tế (Dương tính giả).", "B. Huyết áp đo được thấp hơn thực tế.", "C. Không ảnh hưởng gì.", "D. Máy sẽ báo lỗi không đo được.", "E. Huyết áp tâm thu thấp, tâm trương cao."], correct: 0, explain: "Bao quấn chật làm tăng áp lực giả tạo cần thiết để ép động mạch, dẫn đến chỉ số cao hơn thực tế." },
+            { id: 13, question: "Mục đích chính của việc bàn giao ca trực (giao ban) là gì?", options: ["A. Để điểm danh nhân viên.", "B. Để chia sẻ chuyện phiếm trong khoa.", "C. Đảm bảo sự liên tục trong chăm sóc và điều trị bệnh nhân, truyền đạt thông tin quan trọng.", "D. Để phê bình các sai sót của ca trước.", "E. Để phân chia đồ ăn trực."], correct: 2, explain: "Giao ban là hoạt động chuyên môn quan trọng nhất để đảm bảo an toàn người bệnh được duy trì liên tục." },
+            { id: 14, question: "Kỹ thuật tiêm bắp (IM) thường đâm kim một góc bao nhiêu độ so với mặt da?", options: ["A. 15-30 độ", "B. 30-45 độ", "C. 45-60 độ", "D. 90 độ", "E. 10-15 độ"], correct: 3, explain: "Tiêm bắp sâu cần góc 90 độ. Tiêm dưới da 45 độ. Tiêm tĩnh mạch 15-30 độ. Tiêm trong da 10-15 độ." },
+            { id: 15, question: "Nếu bệnh nhân hỏi về bệnh tình của họ nhưng bác sĩ dặn chưa được tiết lộ, bạn sẽ làm gì?", options: ["A. Nói dối là bệnh nhân không sao cả.", "B. Nói hết sự thật cho bệnh nhân biết.", "C. Khuyên bệnh nhân nên hỏi trực tiếp bác sĩ điều trị để có thông tin chính xác nhất.", "D. Lờ đi và không trả lời.", "E. Nói vòng vo sang chuyện khác."], correct: 2, explain: "Điều dưỡng cần tôn trọng phạm vi chuyên môn và quyền được thông tin chính xác từ bác sĩ điều trị." },
+            { id: 16, question: "Khi thực hiện y lệnh qua điện thoại, quy trình chuẩn là gì?", options: ["A. Nghe - Làm ngay.", "B. Nghe - Ghi lại - Làm ngay.", "C. Nghe - Ghi lại - Đọc lại cho bác sĩ xác nhận (Read-back) - Thực hiện.", "D. Ghi âm lại rồi làm.", "E. Yêu cầu bác sĩ gửi tin nhắn xác nhận."], correct: 2, explain: "Quy trình Read-back (Đọc lại) là bắt buộc để tránh nghe nhầm tên thuốc hoặc liều lượng." },
+            { id: 17, question: "Dấu hiệu sinh tồn (Vital Signs) bao gồm những chỉ số nào?", options: ["A. Mạch, Nhiệt độ, Huyết áp, Nhịp thở.", "B. Mạch, Nhiệt độ, Huyết áp, Chiều cao.", "C. Mạch, Huyết áp, Cân nặng, Nhịp thở.", "D. Nhiệt độ, Huyết áp, Nhịp thở, SpO2, Đường huyết.", "E. Mạch, Nhiệt độ, Huyết áp, Nhịp thở, Đau (dấu hiệu thứ 5)."], correct: 4, explain: "Hiện nay 'Đau' thường được coi là dấu hiệu sinh tồn thứ 5 cần được theo dõi thường quy." },
+            { id: 18, question: "Khi đi phỏng vấn, nếu được hỏi 'Tại sao bạn chọn bệnh viện chúng tôi?', câu trả lời hay nhất là:", options: ["A. Vì bệnh viện gần nhà tôi.", "B. Vì lương ở đây cao.", "C. Vì tôi thấy bệnh viện có môi trường chuyên nghiệp, phù hợp với định hướng phát triển kỹ năng X của tôi.", "D. Vì bố mẹ tôi bắt nộp hồ sơ vào đây.", "E. Vì tôi nộp nhiều chỗ mà chưa chỗ nào gọi."], correct: 2, explain: "Thể hiện sự tìm hiểu về nơi làm việc và gắn kết mục tiêu cá nhân với tổ chức." },
+            { id: 19, question: "Bạn làm gì khi thấy đồng nghiệp vi phạm quy trình vô khuẩn?", options: ["A. Lờ đi vì không phải việc của mình.", "B. Nhắc nhở nhẹ nhàng và kín đáo để họ sửa chữa.", "C. Báo cáo ngay lên Ban giám đốc.", "D. Quát lớn để mọi người cùng biết.", "E. Chụp ảnh lại làm bằng chứng."], correct: 1, explain: "Góp ý mang tính xây dựng (Constructive feedback) là cách tốt nhất để duy trì an toàn mà vẫn giữ tình đồng nghiệp." },
+            { id: 20, question: "Hồ sơ bệnh án là tài liệu:", options: ["A. Hành chính đơn thuần.", "B. Pháp lý quan trọng, cần ghi chép trung thực, chính xác, không tẩy xóa.", "C. Cá nhân của bác sĩ.", "D. Có thể sửa chữa tùy ý nếu viết sai.", "E. Chỉ cần viết khi bệnh nhân xuất viện."], correct: 1, explain: "Hồ sơ bệnh án là bằng chứng pháp lý bảo vệ cả bệnh nhân và nhân viên y tế." },
+            { id: 21, question: "Tư thế Fowler (nửa nằm nửa ngồi) thường dùng cho bệnh nhân nào?", options: ["A. Bệnh nhân tụt huyết áp.", "B. Bệnh nhân khó thở, suy hô hấp.", "C. Bệnh nhân chấn thương cột sống.", "D. Bệnh nhân sau chọc dò tủy sống.", "E. Bệnh nhân hôn mê."], correct: 1, explain: "Tư thế Fowler giúp cơ hoành hạ thấp, phổi giãn nở tốt hơn, giảm khó thở." },
+            { id: 22, question: "Khi xảy ra hỏa hoạn trong bệnh viện, ưu tiên hàng đầu là gì?", options: ["A. Cố gắng dập lửa.", "B. Gọi cứu hỏa.", "C. Di chuyển bệnh nhân ra khỏi vùng nguy hiểm (R.A.C.E).", "D. Chạy thoát thân.", "E. Gom hồ sơ bệnh án."], correct: 2, explain: "Quy tắc RACE: Rescue (Cứu người) -> Alarm (Báo động) -> Contain (Khoanh vùng) -> Extinguish (Dập lửa)." },
+            { id: 23, question: "Bệnh nhân yêu cầu xem hồ sơ bệnh án của mình. Bạn xử lý sao?", options: ["A. Đưa ngay cho bệnh nhân xem.", "B. Từ chối thẳng thừng.", "C. Giải thích quy định bệnh viện và hướng dẫn thủ tục xin sao lục hồ sơ theo quy định pháp luật.", "D. Cho xem lén.", "E. Hỏi ý kiến bảo vệ."], correct: 2, explain: "Hồ sơ bệnh án thuộc quyền quản lý của bệnh viện, việc cung cấp thông tin phải tuân thủ quy trình pháp lý." },
+            { id: 24, question: "Sự kiện bất lợi (Adverse Event) trong y khoa là gì?", options: ["A. Là sai sót y khoa gây hậu quả nghiêm trọng.", "B. Là sự cố không mong muốn gây tổn hại cho người bệnh liên quan đến quá trình chăm sóc y tế.", "C. Là do bệnh nhân không tuân thủ điều trị.", "D. Là do bệnh nhân dị ứng thuốc bẩm sinh.", "E. Là tai nạn nghề nghiệp của nhân viên y tế."], correct: 1, explain: "Định nghĩa chuẩn về Sự cố y khoa/Sự kiện bất lợi." },
+            { id: 25, question: "Khi giao tiếp với bệnh nhân khiếm thính, bạn nên làm gì?", options: ["A. Hét thật to vào tai họ.", "B. Nói chuyện bình thường.", "C. Sử dụng giấy bút, hình ảnh hoặc cử chỉ, nhìn thẳng mặt khi nói.", "D. Bỏ qua không giao tiếp.", "E. Chỉ giao tiếp với người nhà."], correct: 2, explain: "Sử dụng phương tiện hỗ trợ và giao tiếp phi ngôn ngữ là cần thiết." },
+            { id: 26, question: "Chuẩn đạo đức nghề nghiệp điều dưỡng Việt Nam có bao nhiêu chuẩn?", options: ["A. 5 chuẩn.", "B. 8 chuẩn.", "C. 10 chuẩn.", "D. 12 chuẩn.", "E. 6 chuẩn."], correct: 1, explain: "Theo Thông tư 20/2012/TT-BYT, có 8 chuẩn đạo đức nghề nghiệp điều dưỡng." },
+            { id: 27, question: "Mức độ đau của bệnh nhân được đánh giá chủ quan nhất qua:", options: ["A. Biểu hiện nhăn mặt của bệnh nhân.", "B. Chỉ số huyết áp tăng.", "C. Lời khai của bệnh nhân (Thang điểm VAS/NRS).", "D. Nhận định của bác sĩ.", "E. Nhận định của người nhà."], correct: 2, explain: "Đau là cảm giác chủ quan, lời khai của người bệnh là thước đo chính xác nhất." },
+            { id: 28, question: "Kỹ năng làm việc nhóm (Teamwork) trong bệnh viện quan trọng vì:", options: ["A. Giúp công việc vui vẻ hơn.", "B. Giảm bớt khối lượng công việc cho mỗi người.", "C. Đảm bảo an toàn người bệnh và hiệu quả điều trị thông qua sự phối hợp đa chuyên khoa.", "D. Để dễ bao che lỗi cho nhau.", "E. Là quy định bắt buộc."], correct: 2, explain: "An toàn người bệnh phụ thuộc vào sự phối hợp nhịp nhàng giữa bác sĩ, điều dưỡng, kỹ thuật viên..." },
+            { id: 29, question: "Khi bạn bị kim tiêm đã sử dụng cho bệnh nhân đâm vào tay, việc đầu tiên cần làm là:", options: ["A. Nặn máu ra thật nhiều.", "B. Rửa ngay vết thương dưới vòi nước chảy, để máu chảy tự nhiên, không nặn bóp.", "C. Băng kín vết thương ngay.", "D. Uống thuốc kháng sinh.", "E. Đi xét nghiệm HIV ngay lập tức."], correct: 1, explain: "Quy trình xử lý phơi nhiễm: Rửa sạch, không nặn bóp (tránh tổn thương thêm), sau đó báo cáo và đánh giá nguy cơ." },
+            { id: 30, question: "Mục tiêu dài hạn trong CV của một điều dưỡng mới ra trường nên là:", options: ["A. Làm việc ổn định, lương cao.", "B. Trở thành Điều dưỡng trưởng sau 1 năm.", "C. Nâng cao trình độ chuyên môn, học lên Chuyên khoa/Thạc sĩ và trở thành chuyên gia trong lĩnh vực mình chọn.", "D. Chuyển sang làm kinh doanh thiết bị y tế.", "E. Kiếm đủ tiền rồi nghỉ hưu sớm."], correct: 2, explain: "Thể hiện sự cầu tiến, gắn bó với nghề và lộ trình phát triển rõ ràng." }
+        ];
+
+        // --- ICONS (SVG Fix) ---
+        const Icon = ({ name, size = 20, className = "" }) => {
+            const icons = {
+                Upload: <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>,
+                FileText: <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />,
+                Check: <polyline points="20 6 9 17 4 12" />,
+                Briefcase: <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />,
+                MedicalCross: <path d="M12 5v14M5 12h14" strokeWidth="3" />,
+                HeartPulse: <path d="M22 12h-4l-3 9L9 3l-3 9H2" />,
+                BrainCircuit: <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z" />,
+                Star: <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />,
+                Home: <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />,
+                
+                // Fixed icons with <g>
+                Alert: <g><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></g>,
+                Search: <g><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></g>,
+                MapPin: <g><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></g>,
+                ArrowDown: <g><line x1="12" y1="5" x2="12" y2="19" /><polyline points="19 12 12 19 5 12" /></g>,
+                XCircle: <g><circle cx="12" cy="12" r="10" /><line x1="15" y1="9" x2="9" y2="15" /><line x1="9" y1="9" x2="15" y2="15" /></g>,
+                Lightbulb: <g><line x1="9" y1="18" x2="15" y2="18" /><line x1="10" y1="22" x2="14" y2="22" /><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 9.5 6 4.65 4.65 0 0 0 3.5 11.5c0 1.07.49 2.07 1.41 2.5.76.76 1.23 1.52 1.41 2.5" /></g>,
+                Edit: <g><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></g>,
+                Quiz: <g><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></g>,
+                Refresh: <g><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></g>
+            };
+            return (
+                <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    {icons[name] || icons.HeartPulse}
+                </svg>
+            );
+        };
+
+        // --- COMPONENTS ---
+
+        const IntroBlog = () => (
+            <div className="glass-panel p-8 rounded-2xl mb-8 animate-fade-in bg-gradient-to-br from-white to-sky-50 border-l-4 border-sky-500 shadow-md">
+                <div className="flex flex-col md:flex-row items-start gap-6">
+                    <div className="bg-white p-4 rounded-full text-sky-600 shadow-lg border border-sky-100 hidden md:block">
+                        <Icon name="Star" size={40} className="text-yellow-500" />
+                    </div>
+                    <div className="flex-1">
+                        <h2 className="text-2xl font-bold text-sky-900 mb-3 flex items-center gap-2">
+                            <span className="text-3xl">✨</span> Làm thế nào để viết CV phù hợp với Nhà tuyển dụng?
+                        </h2>
+                        <div className="text-gray-700 text-base leading-relaxed space-y-3">
+                            <p className="font-medium text-red-600 bg-red-50 p-3 rounded-lg border border-red-100">
+                                <strong>Thực trạng đáng báo động:</strong> Hơn 70% sinh viên Điều dưỡng mới ra trường, dù rất giỏi chuyên môn, vẫn bị loại ngay từ vòng hồ sơ. Lý do đơn giản: <strong>Không biết cách trình bày năng lực lâm sàng</strong> vào CV.
+                            </p>
+                            <p>
+                                Viết CV ngành Y không giống các ngành khác. Bạn không thể chỉ liệt kê chung chung "chăm sóc bệnh nhân". Nhà tuyển dụng cần thấy:
+                                <strong>Bạn đã thực hiện được kỹ thuật gì? (đặt sonde, tiêm tĩnh mạch, hồi sức tim phổi...)</strong>, 
+                                <strong>Bạn có chịu được áp lực trực đêm không?</strong> và <strong>Thái độ Y đức của bạn ra sao?</strong>.
+                            </p>
+                            <p>
+                                Trang web này được tạo ra để giải quyết vấn đề đó. Chúng tôi giúp bạn chuẩn hóa ngôn ngữ chuyên ngành, so sánh năng lực của bạn với yêu cầu thực tế của các bệnh viện lớn (Bạch Mai, Chợ Rẫy...) để bạn tự tin ứng tuyển.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const JobMatcher = ({ onSelectJob }) => {
+            const [filter, setFilter] = useState({ location: "", specialty: "", experience: "new", nightShift: "yes", salary: "" });
+            const [suggestions, setSuggestions] = useState([]);
+            const [warning, setWarning] = useState(null);
+
+            const handleSearch = () => {
+                setWarning(null);
+                setSuggestions([]);
+
+                const cityName = filter.location;
+                if (!cityName) {
+                    alert("Vui lòng chọn khu vực làm việc!");
+                    return;
+                }
+
+                const userSalary = parseInt(filter.salary) || 0;
+                const experienceType = filter.experience;
+                
+                const majorCities = ["Hà Nội", "TP. Hồ Chí Minh", "Đà Nẵng"];
+                const isMajor = majorCities.includes(cityName);
+
+                let maxRealistic = 0;
+                let avgRange = "";
+                let reason = "";
+
+                if (experienceType === 'new') {
+                    if (isMajor) {
+                        maxRealistic = 15;
+                        avgRange = "7 - 12";
+                    } else {
+                        maxRealistic = 10;
+                        avgRange = "5 - 9";
+                    }
+                    reason = "đối với ứng viên mới tốt nghiệp, chưa có chứng chỉ hành nghề hoặc kinh nghiệm lâm sàng thực tế.";
+                } else if (experienceType === '1-3') {
+                     if (isMajor) {
+                        maxRealistic = 25; 
+                        avgRange = "12 - 20";
+                    } else {
+                        maxRealistic = 15; 
+                        avgRange = "9 - 14";
+                    }
+                    reason = "đối với nhân sự có 1-3 năm kinh nghiệm tại khu vực này.";
+                } else {
+                     if (isMajor) {
+                        maxRealistic = 50; 
+                        avgRange = "18 - 35";
+                    } else {
+                        maxRealistic = 30; 
+                        avgRange = "12 - 25";
+                    }
+                }
+
+                if (userSalary > maxRealistic) {
+                     setWarning({
+                        message: `Mức lương ${userSalary}.000.000 VNĐ là chưa khả thi.`,
+                        details: [
+                            `Tại ${cityName}, mức lương trung bình thực tế ${reason}`,
+                            `Thị trường hiện tại dao động khoảng: ${avgRange} triệu đồng/tháng.`,
+                            experienceType === 'new' 
+                                ? "Lời khuyên: Là sinh viên mới ra trường, bạn nên ưu tiên môi trường được đào tạo và cấp Chứng chỉ hành nghề hơn là thu nhập cao ngay lập tức." 
+                                : "Lời khuyên: Mức lương này thường chỉ dành cho các vị trí Quản lý (Điều dưỡng trưởng) hoặc tại các Bệnh viện Quốc tế lớn đòi hỏi tiếng Anh lưu loát."
+                        ]
+                    });
+                    return;
+                }
+
+                const specObj = SPECIALTIES.find(s => s.id === filter.specialty);
+                const specName = specObj ? specObj.name.split(':')[0] : "Điều dưỡng đa khoa";
+                
+                const salaryDisplay = filter.salary ? `~${filter.salary}.000.000 VNĐ` : "Thỏa thuận";
+
+                let hospitals = REAL_HOSPITALS_DB[cityName];
+                
+                if (!hospitals) {
+                    hospitals = [
+                        `Bệnh viện Đa khoa tỉnh ${cityName}`,
+                        `Bệnh viện Sản Nhi ${cityName}`,
+                        `Trung tâm Y tế ${cityName}`,
+                        `Bệnh viện Y học cổ truyền ${cityName}`
+                    ];
+                }
+
+                const mockResults = hospitals.slice(0, 5).map((hospitalName) => {
+                    const isPrivate = hospitalName.toLowerCase().includes('vinmec') || 
+                                    hospitalName.toLowerCase().includes('tâm anh') || 
+                                    hospitalName.toLowerCase().includes('quốc tế') ||
+                                    hospitalName.toLowerCase().includes('hoàn mỹ') ||
+                                    hospitalName.toLowerCase().includes('tư nhân');
+                    
+                    const type = isPrivate ? "Tư nhân/Quốc tế" : "Công lập";
+                    
+                    let finalSalary = salaryDisplay;
+                    if (isPrivate && userSalary > 0) {
+                        finalSalary = `${userSalary} - ${userSalary + 5}.000.000 VNĐ (Thưởng)`;
+                    } else if (!isPrivate && userSalary > 0) {
+                         finalSalary = `${userSalary}.000.000 VNĐ (Tổng thu nhập)`;
+                    }
+
+                    return {
+                        name: hospitalName,
+                        type: type,
+                        jd: `Tuyển ${specName}. Yêu cầu: Tốt nghiệp Cao đẳng trở lên. Ưu tiên người địa phương. Trực đêm theo tua.`,
+                        salary: finalSalary
+                    };
+                });
+
+                setSuggestions(mockResults);
+            };
+
+            return (
+                <div className="h-full flex flex-col">
+                    <h3 className="text-sky-800 font-bold mb-2 flex items-center gap-2">
+                        <Icon name="MapPin" className="text-sky-500" /> 
+                        Tìm nơi làm việc phù hợp
+                    </h3>
+
+                    <p className="text-sm text-gray-600 mb-4 italic">
+                        Nếu bạn vẫn chưa tìm được bến đỗ phù hợp cho sự nghiệp của mình, đừng lo lắng. Hãy nhập mong muốn của bạn bên dưới, chúng tôi sẽ giúp bạn tìm kiếm những môi trường lý tưởng nhất!
+                    </p>
+                    
+                    <div className="space-y-3 bg-sky-50 p-4 rounded-xl border border-sky-100">
+                        {/* Location */}
+                        <div>
+                            <label className="text-xs font-bold text-sky-700 uppercase">Khu vực làm việc</label>
+                            <select 
+                                className="w-full mt-1 p-2 rounded-lg border border-sky-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-white"
+                                value={filter.location}
+                                onChange={(e) => setFilter({...filter, location: e.target.value})}
+                            >
+                                <option value="">-- Chọn Tỉnh/Thành phố --</option>
+                                {PROVINCES.map(p => <option key={p} value={p}>{p}</option>)}
+                            </select>
+                        </div>
+
+                        {/* Specialty */}
+                        <div>
+                            <label className="text-xs font-bold text-sky-700 uppercase">Chuyên khoa mong muốn</label>
+                            <select 
+                                className="w-full mt-1 p-2 rounded-lg border border-sky-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-white"
+                                value={filter.specialty}
+                                onChange={(e) => setFilter({...filter, specialty: e.target.value})}
+                            >
+                                <option value="">-- Chọn chuyên khoa --</option>
+                                {SPECIALTIES.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                            </select>
+                        </div>
+
+                        {/* Factors */}
+                        <div className="grid grid-cols-2 gap-2">
+                            <div>
+                                <label className="text-xs font-bold text-sky-700 uppercase">Kinh nghiệm</label>
+                                <select 
+                                    className="w-full mt-1 p-2 rounded-lg border border-sky-200 text-sm bg-white"
+                                    value={filter.experience}
+                                    onChange={(e) => setFilter({...filter, experience: e.target.value})}
+                                >
+                                    <option value="new">Mới ra trường</option>
+                                    <option value="1-3">1-3 năm</option>
+                                    <option value=">3">Trên 3 năm</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="text-xs font-bold text-sky-700 uppercase">Trực đêm</label>
+                                <select 
+                                    className="w-full mt-1 p-2 rounded-lg border border-sky-200 text-sm bg-white"
+                                    value={filter.nightShift}
+                                    onChange={(e) => setFilter({...filter, nightShift: e.target.value})}
+                                >
+                                    <option value="yes">Có thể</option>
+                                    <option value="no">Không thể</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {/* Salary Manual Input */}
+                        <div>
+                            <label className="text-xs font-bold text-sky-700 uppercase">Mức lương mong muốn</label>
+                            <div className="mt-1 flex items-center">
+                                <input 
+                                    type="text"
+                                    className="w-14 p-2 text-center rounded-l-lg border border-r-0 border-sky-200 text-sm font-bold text-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-400 bg-white placeholder-gray-300"
+                                    placeholder="--"
+                                    maxLength={3}
+                                    value={filter.salary}
+                                    onChange={(e) => setFilter({...filter, salary: e.target.value.replace(/[^0-9]/g, '')})}
+                                />
+                                <div className="flex-1 p-2 rounded-r-lg border border-l-0 border-sky-200 text-sm bg-gray-50 text-gray-600 font-medium select-none">
+                                    .000.000 VNĐ
+                                </div>
+                            </div>
+                        </div>
+
+                        <button onClick={handleSearch} className="w-full bg-sky-600 text-white py-2 rounded-lg font-bold hover:bg-sky-700 transition shadow-md mt-2">
+                            Tìm kiếm Bệnh viện
+                        </button>
+                    </div>
+
+                    {/* Warning Message Area */}
+                    {warning && (
+                        <div className="mt-4 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-xl animate-fade-in shadow-sm">
+                            <div className="flex items-start gap-3">
+                                <div className="text-red-500 mt-1"><Icon name="Alert" size={24}/></div>
+                                <div>
+                                    <h4 className="font-bold text-red-700 mb-1">{warning.message}</h4>
+                                    <ul className="text-sm text-gray-700 space-y-1 list-disc pl-4">
+                                        {warning.details.map((detail, idx) => (
+                                            <li key={idx}>{detail}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Results */}
+                    <div className="mt-4 flex-1 overflow-y-auto pr-1">
+                        {suggestions.map((h, idx) => (
+                            <div key={idx} onClick={() => onSelectJob(h)} className="bg-white p-3 mb-2 rounded-lg border border-gray-200 hover:border-sky-500 hover:bg-sky-50 cursor-pointer transition">
+                                <div className="font-bold text-sky-900 text-sm">{h.name}</div>
+                                <div className="flex justify-between items-center mt-1">
+                                    <span className="text-xs text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">{h.type}</span>
+                                    <span className="text-xs font-bold text-green-600">{h.salary}</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        const FileUpload = ({ onTextExtracted }) => {
+            const [isProcessing, setIsProcessing] = useState(false);
+            const fileInputRef = useRef(null);
+
+            const handleFile = async (file) => {
+                if (!file) return;
+                setIsProcessing(true);
+                try {
+                    let text = "";
+                    if (file.name.endsWith('.pdf')) {
+                        text = await extractTextFromPDF(file);
+                    } else if (file.name.endsWith('.docx')) {
+                        text = await extractTextFromDocx(file);
+                    } else {
+                        // Default to text read
+                        text = await file.text();
+                    }
+                    
+                    if(text.trim().length < 10) alert("Không tìm thấy nội dung văn bản. Vui lòng thử lại với file khác.");
+                    else onTextExtracted(text, file.name);
+                } catch (e) { 
+                    console.error(e);
+                    alert("Lỗi đọc file. Hãy thử file PDF hoặc copy nội dung."); 
+                }
+                setIsProcessing(false);
+            };
+
+            return (
+                <div 
+                    className="upload-zone p-8 rounded-2xl border-2 border-dashed border-sky-300 text-center cursor-pointer mb-4 transition-all hover:scale-[1.02]"
+                    onClick={() => fileInputRef.current.click()}
+                >
+                    <input ref={fileInputRef} type="file" className="hidden" accept=".pdf,.txt,.docx,.doc" onChange={(e) => handleFile(e.target.files[0])} />
+                    {isProcessing ? <div className="text-sky-600 font-bold animate-pulse">Đang xử lý tài liệu...</div> : (
+                        <div className="flex flex-col items-center gap-2">
+                            <div className="bg-white p-3 rounded-full text-sky-600 shadow-sm border border-sky-100"><Icon name="Upload" size={28} /></div>
+                            <span className="text-sky-800 font-bold text-lg">Nhấn để chọn file</span>
+                            <span className="text-gray-500 text-sm">Hỗ trợ PDF, Word (.docx), TXT</span>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+        
+        const extractTextFromPDF = async (file) => {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await window.pdfjsLib.getDocument(arrayBuffer).promise;
+            let fullText = "";
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const textContent = await page.getTextContent();
+                fullText += textContent.items.map(item => item.str).join(" ") + "\n";
+            }
+            return fullText;
+        };
+
+        const extractTextFromDocx = async (file) => {
+            const arrayBuffer = await file.arrayBuffer();
+            const result = await window.mammoth.extractRawText({ arrayBuffer: arrayBuffer });
+            return result.value;
+        };
+
+        const InterviewPractice = () => {
+            const [started, setStarted] = useState(false);
+            const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+            const [score, setScore] = useState(0);
+            const [showResult, setShowResult] = useState(false);
+            const [selectedAnswer, setSelectedAnswer] = useState(null);
+            const [userAnswers, setUserAnswers] = useState([]);
+
+            const handleAnswerSelect = (optionIndex) => {
+                if (selectedAnswer !== null) return; 
+                setSelectedAnswer(optionIndex);
+                
+                const isCorrect = optionIndex === INTERVIEW_QUESTIONS[currentQuestionIndex].correct;
+                if (isCorrect) {
+                    setScore(score + 1);
+                }
+
+                const answerRecord = {
+                    questionId: INTERVIEW_QUESTIONS[currentQuestionIndex].id,
+                    questionText: INTERVIEW_QUESTIONS[currentQuestionIndex].question,
+                    selectedOption: INTERVIEW_QUESTIONS[currentQuestionIndex].options[optionIndex],
+                    correctOption: INTERVIEW_QUESTIONS[currentQuestionIndex].options[INTERVIEW_QUESTIONS[currentQuestionIndex].correct],
+                    isCorrect: isCorrect,
+                    explanation: INTERVIEW_QUESTIONS[currentQuestionIndex].explain
+                };
+                setUserAnswers([...userAnswers, answerRecord]);
+            };
+
+            const handleNextQuestion = () => {
+                if (currentQuestionIndex < INTERVIEW_QUESTIONS.length - 1) {
+                    setCurrentQuestionIndex(currentQuestionIndex + 1);
+                    setSelectedAnswer(null);
+                } else {
+                    setShowResult(true);
+                }
+            };
+
+            const handleRestart = () => {
+                setStarted(false);
+                setCurrentQuestionIndex(0);
+                setScore(0);
+                setShowResult(false);
+                setSelectedAnswer(null);
+                setUserAnswers([]);
+            };
+
+            if (!started) {
+                return (
+                    <div className="glass-panel p-8 rounded-2xl text-center flex flex-col items-center justify-center h-full">
+                        <div className="bg-sky-100 p-4 rounded-full mb-4">
+                            <Icon name="Quiz" size={48} className="text-sky-600"/>
+                        </div>
+                        <h3 className="text-2xl font-bold text-sky-900 mb-2">Rèn Luyện Phỏng Vấn</h3>
+                        <p className="text-gray-600 mb-6 max-w-lg">
+                            Thử sức với bộ 30 câu hỏi trắc nghiệm chuyên ngành Điều dưỡng để tự tin hơn trước nhà tuyển dụng.
+                        </p>
+                        <button 
+                            onClick={() => setStarted(true)}
+                            className="px-8 py-3 bg-gradient-to-r from-sky-600 to-blue-700 text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
+                        >
+                            Bắt đầu ngay
+                        </button>
+                    </div>
+                );
+            }
+
+            if (showResult) {
+                return (
+                    <div className="glass-panel p-6 rounded-2xl h-full flex flex-col">
+                        <div className="text-center mb-6">
+                            <h3 className="text-2xl font-bold text-sky-900">Kết Quả Luyện Tập</h3>
+                            <div className="text-4xl font-black text-sky-600 my-2">
+                                {score} / {INTERVIEW_QUESTIONS.length}
+                            </div>
+                        </div>
+                        <div className="flex-1 overflow-y-auto pr-2 space-y-4">
+                            {userAnswers.map((ans, idx) => (
+                                <div key={idx} className={`p-4 rounded-xl border ${ans.isCorrect ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
+                                    <p className="font-bold text-gray-800 text-sm mb-2">Câu {idx + 1}: {ans.questionText}</p>
+                                    <div className="text-sm">
+                                        <p className={`${ans.isCorrect ? 'text-green-700' : 'text-red-600'} font-medium`}>Bạn chọn: {ans.selectedOption}</p>
+                                        {!ans.isCorrect && <p className="text-green-700 font-medium mt-1">Đáp án đúng: {ans.correctOption}</p>}
+                                        <p className="text-gray-500 text-xs mt-2 italic">💡 {ans.explanation}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="mt-4 text-center">
+                            <button onClick={handleRestart} className="px-6 py-2 bg-sky-600 text-white rounded-lg font-bold hover:bg-sky-700 transition flex items-center justify-center gap-2 mx-auto">
+                                <Icon name="Refresh" size={18}/> Làm lại
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            const currentQ = INTERVIEW_QUESTIONS[currentQuestionIndex];
+
+            return (
+                <div className="glass-panel p-6 rounded-2xl h-full flex flex-col">
+                    <div className="flex justify-between items-center mb-4 border-b border-sky-100 pb-3">
+                        <span className="text-sm font-bold text-sky-600 bg-sky-50 px-3 py-1 rounded-full">Câu hỏi {currentQuestionIndex + 1}/{INTERVIEW_QUESTIONS.length}</span>
+                        <span className="text-sm text-gray-500 font-medium">Điểm: {score}</span>
+                    </div>
+                    <div className="flex-1 overflow-y-auto mb-4">
+                        <h4 className="text-lg font-bold text-gray-800 mb-6 leading-relaxed">{currentQ.question}</h4>
+                        <div className="space-y-3">
+                            {currentQ.options.map((opt, idx) => (
+                                <button key={idx} onClick={() => handleAnswerSelect(idx)} disabled={selectedAnswer !== null} className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 flex items-start gap-3 ${selectedAnswer === null ? 'border-gray-100 hover:border-sky-300 hover:bg-sky-50' : idx === currentQ.correct ? 'border-green-500 bg-green-50' : selectedAnswer === idx ? 'border-red-500 bg-red-50' : 'border-gray-100 opacity-50'}`}>
+                                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 ${selectedAnswer === null ? 'border-gray-300' : idx === currentQ.correct ? 'border-green-500 bg-green-500 text-white' : selectedAnswer === idx ? 'border-red-500 bg-red-500 text-white' : 'border-gray-200'}`}>
+                                        {idx === currentQ.correct && selectedAnswer !== null && <Icon name="Check" size={14} />}
+                                        {selectedAnswer === idx && idx !== currentQ.correct && <span className="text-xs font-bold">✕</span>}
+                                    </div>
+                                    <span className={`text-sm ${selectedAnswer !== null && idx === currentQ.correct ? 'font-bold text-green-800' : 'text-gray-700'}`}>{opt}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                    {selectedAnswer !== null && (
+                        <div className="mt-auto animate-fade-in">
+                            <button onClick={handleNextQuestion} className="w-full py-3 bg-sky-600 text-white rounded-xl font-bold hover:bg-sky-700 transition shadow-lg">{currentQuestionIndex === INTERVIEW_QUESTIONS.length - 1 ? "Xem Kết Quả" : "Câu Tiếp Theo"}</button>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const MockAI = {
+            analyzeCV: (cvText, jdText) => {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        const text = cvText.toLowerCase();
+                        const jd = jdText.toLowerCase();
+                        const hasJD = jd.length > 20;
+
+                        // Detect Hospital Name
+                        let targetHospital = "Bệnh viện";
+                        const knownHospitals = ["bạch mai", "chợ rẫy", "việt đức", "từ dũ", "nhi trung ương", "vinmec", "tâm anh"];
+                        const foundName = knownHospitals.find(name => jd.includes(name));
+                        if (foundName) {
+                            targetHospital = foundName.replace(/(^\w|\s\w)/g, m => m.toUpperCase());
+                        }
+
+                        let score = 50;
+                        let strengths = [];
+                        let weaknesses = [];
+                        let suggestions = [];
+
+                        // 1. Contact
+                        if (/@/.test(text) && /\d{9,}/.test(text)) score += 10;
+                        else {
+                            weaknesses.push("Thiếu thông tin liên hệ (Email/SĐT).");
+                            suggestions.push("Bổ sung ngay thông tin liên hệ ở đầu CV.");
+                        }
+
+                        // 2. Keywords
+                        const keywords = ['điều dưỡng', 'chăm sóc', 'bệnh nhân', 'tiêm', 'cấp cứu', 'y lệnh'];
+                        const found = keywords.filter(k => text.includes(k));
+                        if (found.length >= 3) {
+                            score += 20;
+                            strengths.push("Có sử dụng từ khóa chuyên ngành.");
+                        } else {
+                            weaknesses.push("Thiếu từ vựng chuyên môn.");
+                            suggestions.push("Thêm các từ: chăm sóc, theo dõi, y lệnh...");
+                        }
+
+                        // 3. JD Match
+                        if (hasJD) {
+                            if (text.includes("kinh nghiệm") || text.includes("kỹ năng")) {
+                                score += 20;
+                                strengths.push(`Cấu trúc CV phù hợp với yêu cầu của ${targetHospital}.`);
+                            } else {
+                                weaknesses.push("Chưa làm nổi bật kỹ năng so với JD.");
+                                suggestions.push(`Đối chiếu kỹ với JD của ${targetHospital} để thêm từ khóa.`);
+                            }
+                        } else {
+                            suggestions.push("Nên nhập JD để so sánh chính xác hơn.");
+                        }
+
+                        score = Math.min(100, Math.max(10, score));
+
+                        resolve({
+                            score,
+                            summary: score > 70 ? "Hồ sơ Khá Tốt" : "Cần cải thiện thêm",
+                            strengths, weaknesses, suggestions
+                        });
+                    }, 2000);
+                });
+            }
+        };
+
+        const App = () => {
+            const [view, setView] = useState('input');
+            const [cvText, setCvText] = useState('');
+            const [jdText, setJdText] = useState('');
+            const [result, setResult] = useState(null);
+            const [fileName, setFileName] = useState('');
+            
+            const [quickHospitalSearch, setQuickHospitalSearch] = useState('');
+
+            const handleAnalyze = async () => {
+                if(!cvText) return alert("Vui lòng tải CV!");
+                setView('analyzing');
+                const res = await MockAI.analyzeCV(cvText, jdText);
+                setResult(res);
+                setView('report');
+            };
+            
+            const handleQuickJDFill = () => {
+                if (!quickHospitalSearch.trim()) return;
+                const found = JD_DATABASE.find(h => h.names.some(n => quickHospitalSearch.toLowerCase().includes(n)));
+                if (found) {
+                    setJdText(found.jd);
+                    alert(`Đã tìm thấy và điền JD của ${found.name}`);
+                } else {
+                    setJdText(`Yêu cầu tuyển dụng cho ${quickHospitalSearch}:\n- Tốt nghiệp chuyên ngành Điều dưỡng.\n- Có chứng chỉ hành nghề.\n- Kỹ năng lâm sàng cơ bản.\n- Đạo đức nghề nghiệp tốt.`);
+                    alert("Đã tạo JD mẫu chung.");
+                }
+            };
+
+            const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({behavior: 'smooth'});
+
+            return (
+                <div className="min-h-screen pb-12 flex flex-col">
+                    {/* Header */}
+                    <nav className="bg-white/90 backdrop-blur sticky top-0 z-50 border-b border-sky-100 px-6 py-3 shadow-sm">
+                        <div className="max-w-6xl mx-auto flex justify-between items-center">
+                            <div className="flex items-center gap-2 text-2xl font-black text-sky-700">
+                                <Icon name="MedicalCross" size={24} className="text-sky-600"/> CV Master <span className="text-sky-400">AI</span>
+                            </div>
+                            <div className="hidden md:flex gap-4 text-sm font-bold text-gray-600">
+                                <button onClick={() => window.scrollTo({top:0, behavior:'smooth'})}>Trang chủ</button>
+                                <button onClick={() => scrollTo('upload-area')}>Phân tích</button>
+                                <button onClick={() => scrollTo('interview-practice')}>Luyện Phỏng vấn</button>
+                                <button onClick={() => scrollTo('tools-area')}>Công cụ</button>
+                            </div>
+                        </div>
+                    </nav>
+
+                    <main className="max-w-6xl mx-auto p-6 mt-2 flex-grow w-full">
+                        {view === 'input' && (
+                            <div className="animate-fade-in">
+                                <div className="text-center mb-6">
+                                    <h1 className="text-3xl font-extrabold text-sky-900 mb-2">Cách Viết CV <span className="medical-gradient-text">Chinh Phục Nhà Tuyển Dụng</span></h1>
+                                    <p className="text-sky-600">Công cụ tối ưu hóa hồ sơ ứng viên Y tế</p>
+                                </div>
+                                <IntroBlog />
+
+                                <div className="flex flex-col gap-6">
+                                    {/* AREA 1: CV & JD & Analyze */}
+                                    <div id="upload-area" className="glass-panel p-6 rounded-2xl">
+                                        <h3 className="text-xl font-bold text-sky-900 mb-4 flex items-center gap-2">
+                                            <Icon name="FileText" className="text-sky-500"/> Hồ sơ & Yêu cầu (JD)
+                                        </h3>
+                                        
+                                        <div className="grid md:grid-cols-2 gap-6">
+                                            {/* Left: CV Upload & Preview */}
+                                            <div className="flex flex-col gap-3">
+                                                <label className="font-bold text-gray-700 text-sm">1. Tải lên CV của bạn</label>
+                                                <FileUpload onTextExtracted={(txt, name) => { setCvText(txt); setFileName(name); }} />
+                                                {fileName && <div className="text-xs text-green-700 bg-green-50 p-2 rounded border border-green-200"><Icon name="Check" size={12}/> Đã nhận: {fileName}</div>}
+                                                {/* Hidden textarea used for storage but visible if needed for debugging or manual paste */}
+                                                <textarea className="flex-1 w-full p-3 rounded border border-sky-200 text-sm bg-white" placeholder="Nội dung CV sau khi trích xuất (có thể dán thủ công)..." value={cvText} onChange={e => setCvText(e.target.value)} style={{minHeight: '200px'}}></textarea>
+                                            </div>
+
+                                            {/* Right: JD Input & Search */}
+                                            <div className="flex flex-col gap-3">
+                                                <label className="font-bold text-gray-700 text-sm">2. Yêu cầu tuyển dụng (JD)</label>
+                                                <div className="flex-1 border border-red-200 rounded-xl p-3 bg-red-50/30 flex flex-col gap-3">
+                                                    {/* Quick JD Search integrated here */}
+                                                    <div className="flex gap-2 mb-1">
+                                                        <input 
+                                                            type="text" 
+                                                            className="flex-1 p-2 rounded border border-red-300 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
+                                                            placeholder="Nhập tên bệnh viện (VD: Bạch Mai)..."
+                                                            value={quickHospitalSearch}
+                                                            onChange={(e) => setQuickHospitalSearch(e.target.value)}
+                                                            onKeyPress={(e) => e.key === 'Enter' && handleQuickJDFill()}
+                                                        />
+                                                        <button 
+                                                            onClick={handleQuickJDFill}
+                                                            className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-bold transition"
+                                                        >
+                                                            Lấy JD
+                                                        </button>
+                                                    </div>
+                                                    <textarea className="flex-1 w-full p-3 rounded border border-red-200 text-sm bg-white" placeholder="Nội dung JD sẽ hiển thị ở đây..." value={jdText} onChange={e => setJdText(e.target.value)} style={{minHeight: '150px'}}></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-6 flex justify-center">
+                                            <button onClick={handleAnalyze} className="bg-gradient-to-r from-sky-600 to-blue-700 text-white px-8 py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition flex items-center gap-2">
+                                                <Icon name="BrainCircuit" size={20}/> {jdText ? "PHÂN TÍCH & SO SÁNH" : "PHÂN TÍCH CV NGAY"}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Interview Practice Section */}
+                                    <div id="interview-practice" className="h-[750px] w-full">
+                                        <InterviewPractice />
+                                    </div>
+
+                                    {/* AREA 2: Tools (Job Matcher) */}
+                                    <div id="tools-area" className="glass-panel p-6 rounded-2xl">
+                                        <JobMatcher onSelectJob={(job) => { setJdText(job.jd); scrollTo('upload-area'); }} />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {view === 'analyzing' && (
+                            <div className="flex flex-col items-center justify-center h-[50vh] animate-fade-in">
+                                <div className="w-16 h-16 border-4 border-sky-200 border-t-sky-600 rounded-full animate-spin mb-4 relative">
+                                    <div className="absolute inset-0 flex items-center justify-center text-red-500"><Icon name="MedicalCross" size={24}/></div>
+                                </div>
+                                <h3 className="text-xl font-bold text-sky-900">Đang phân tích hồ sơ...</h3>
+                            </div>
+                        )}
+
+                        {view === 'report' && result && (
+                            <div className="animate-fade-in space-y-6 max-w-4xl mx-auto">
+                                <button onClick={()=>setView('input')} className="text-sky-600 font-bold hover:underline flex items-center gap-1">
+                                    <Icon name="ArrowDown" size={16} className="rotate-90"/> Quay lại
+                                </button>
+                                <div className="glass-panel p-6 rounded-2xl text-center border-t-4 border-sky-500 shadow-lg">
+                                    <div className="text-4xl font-black text-sky-600 mb-2">{result.score}/100</div>
+                                    <div className="font-bold text-lg text-gray-800">{result.summary}</div>
+                                </div>
+                                <div className="grid md:grid-cols-3 gap-4">
+                                    <div className="bg-white p-4 rounded-xl border border-green-200">
+                                        <h4 className="font-bold text-green-700 mb-2">Ưu điểm</h4>
+                                        <ul className="text-sm list-disc pl-4 space-y-1">{result.strengths.map((s,i)=><li key={i}>{s}</li>)}</ul>
+                                    </div>
+                                    <div className="bg-white p-4 rounded-xl border border-red-200">
+                                        <h4 className="font-bold text-red-700 mb-2">Nhược điểm</h4>
+                                        <ul className="text-sm list-disc pl-4 space-y-1">{result.weaknesses.map((w,i)=><li key={i}>{w}</li>)}</ul>
+                                    </div>
+                                    <div className="bg-white p-4 rounded-xl border border-blue-200">
+                                        <h4 className="font-bold text-blue-700 mb-2">Lời khuyên</h4>
+                                        <ul className="text-sm list-disc pl-4 space-y-1">{result.suggestions.map((s,i)=><li key={i}>{s}</li>)}</ul>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </main>
+
+                    <footer className="mt-8 py-6 bg-white border-t border-sky-100 text-center text-gray-500 text-sm">
+                        <div className="max-w-4xl mx-auto px-4">
+                            <p className="font-bold text-sky-800 mb-1">Dự án phát triển bởi Sinh viên Điều dưỡng & Gemini AI</p>
+                            <p>Cảm ơn bạn đã sử dụng. Chúc bạn sớm tìm được công việc ưng ý!</p>
+                        </div>
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
