@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Master AI - Cách Viết CV Phù Hợp Với Nhà Tuyển Dụng</title>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- PDF.js & Mammoth.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <script>
+        window.onload = function() {
+            if (typeof pdfjsLib !== 'undefined') {
+                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            }
+        };
+    </script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Nunito', sans-serif; background-color: #f0f9ff; scroll-behavior: smooth; }
+        
+        .medical-gradient-text {
+            background: linear-gradient(to right, #0284c7, #0ea5e9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid #bae6fd;
+            box-shadow: 0 4px 6px -1px rgba(14, 165, 233, 0.1), 0 2px 4px -1px rgba(14, 165, 233, 0.06);
+        }
+
+        .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .upload-zone {
+            background-color: #f0f9ff;
+            background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='16' ry='16' stroke='%233B82F6' stroke-width='2' stroke-dasharray='12%2c 12' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+            transition: all 0.3s ease;
+        }
+        .upload-zone:hover { background-color: #e0f2fe; border-color: #0284c7; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // --- ICONS ---
+        const Icon = ({ name, size = 20, className = "" }) => {
+            const icons = {
+                Upload: <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>,
+                FileText: <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />,
+                Check: <polyline points="20 6 9 17 4 12" />,
+                Briefcase: <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />,
+                MedicalCross: <path d="M12 5v14M5 12h14" strokeWidth="3" />,
+                HeartPulse: <path d="M22 12h-4l-3 9L9 3l-3 9H2" />,
+                BrainCircuit: <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z" />,
+                Star: <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />,
+                Home: <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />,
+                
+                Alert: <g><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></g>,
+                Search: <g><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></g>,
+                MapPin: <g><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></g>,
+                ArrowDown: <g><line x1="12" y1="5" x2="12" y2="19" /><polyline points="19 12 12 19 5 12" /></g>,
+                XCircle: <g><circle cx="12" cy="12" r="10" /><line x1="15" y1="9" x2="9" y2="15" /><line x1="9" y1="9" x2="15" y2="15" /></g>,
+                Lightbulb: <g><line x1="9" y1="18" x2="15" y2="18" /><line x1="10" y1="22" x2="14" y2="22" /><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 9.5 6 4.65 4.65 0 0 0 3.5 11.5c0 1.07.49 2.07 1.41 2.5.76.76 1.23 1.52 1.41 2.5" /></g>,
+                Edit: <g><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></g>,
+                Quiz: <g><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></g>,
+                Refresh: <g><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></g>,
+                Camera: <g><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></g>
+            };
+            return (
+                <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    {icons[name] || icons.HeartPulse}
+                </svg>
+            );
+        };
+
+        // --- DATA ---
+        const PROVINCES = ["An Giang", "Bà Rịa - Vũng Tàu", "Bắc Giang", "Bắc Kạn", "Bạc Liêu", "Bắc Ninh", "Bến Tre", "Bình Định", "Bình Dương", "Bình Phước", "Bình Thuận", "Cà Mau", "Cao Bằng", "Cần Thơ", "Đà Nẵng", "Đắk Lắk", "Đắk Nông", "Điện Biên", "Đồng Nai", "Đồng Tháp", "Gia Lai", "Hà Giang", "Hà Nam", "Hà Nội", "Hà Tĩnh", "Hải Dương", "Hải Phòng", "Hậu Giang", "Hòa Bình", "Hưng Yên", "Khánh Hòa", "Kiên Giang", "Kon Tum", "Lai Châu", "Lâm Đồng", "Lạng Sơn", "Lào Cai", "Long An", "Nam Định", "Nghệ An", "Ninh Bình", "Ninh Thuận", "Phú Thọ", "Phú Yên", "Quảng Bình", "Quảng Nam", "Quảng Ngãi", "Quảng Ninh", "Quảng Trị", "Sóc Trăng", "Sơn La", "Tây Ninh", "Thái Bình", "Thái Nguyên", "Thanh Hóa", "Thừa Thiên Huế", "Tiền Giang", "TP. Hồ Chí Minh", "Trà Vinh", "Tuyên Quang", "Vĩnh Long", "Vĩnh Phúc", "Yên Bái"].sort((a, b) => a.localeCompare(b, 'vi'));
+        const REAL_HOSPITALS_DB = { "Hà Nội": ["Bệnh viện Bạch Mai", "Bệnh viện Việt Đức", "Bệnh viện 108", "Bệnh viện Đại học Y", "Vinmec Times City"], "TP. Hồ Chí Minh": ["Bệnh viện Chợ Rẫy", "Bệnh viện Từ Dũ", "Bệnh viện Đại học Y Dược", "Bệnh viện 115", "Bệnh viện Nhi đồng 1"], "Đà Nẵng": ["Bệnh viện Đà Nẵng", "Bệnh viện C", "Bệnh viện Hoàn Mỹ"], "Cần Thơ": ["BV Đa khoa Trung ương Cần Thơ"], "Hải Phòng": ["BV Hữu nghị Việt Tiệp"] };
+        const SPECIALTIES = [{ id: "da_khoa", name: "Điều dưỡng Đa khoa" }, { id: "nhi", name: "Điều dưỡng Nhi khoa" }, { id: "ho_sinh", name: "Điều dưỡng Hộ sinh" }, { id: "tam_than", name: "Điều dưỡng Tâm thần" }, { id: "hoi_suc", name: "Điều dưỡng Hồi sức cấp cứu" }, { id: "tim_mach", name: "Điều dưỡng Tim mạch, Hô hấp" }, { id: "ngoai", name: "Điều dưỡng Ngoại thần kinh" }, { id: "chuyen_khoa", name: "Điều dưỡng Tai Mũi Họng, Mắt, RHM" }, { id: "da_lieu", name: "Điều dưỡng Da liễu, Thẩm mỹ" }];
+        
+        // Danh sách bệnh viện toàn quốc cho autocomplete
+        const VIETNAM_HOSPITALS = [
+            "Bệnh viện Bạch Mai", "Bệnh viện Hữu nghị Việt Đức", "Bệnh viện Trung ương Quân đội 108", "Bệnh viện Đại học Y Hà Nội", 
+            "Bệnh viện Thanh Nhàn", "Bệnh viện Xanh Pôn", "Bệnh viện E", "Bệnh viện Phụ sản Trung ương", "Bệnh viện Nhi Trung ương", 
+            "Bệnh viện K", "Bệnh viện Hữu nghị", "Bệnh viện Bưu điện", "Bệnh viện Đa khoa Đống Đa", "Bệnh viện Đa khoa Hà Đông",
+            "Bệnh viện Chợ Rẫy", "Bệnh viện Từ Dũ", "Bệnh viện Đại học Y Dược TPHCM", "Bệnh viện Nhân dân 115", 
+            "Bệnh viện Nhi đồng 1", "Bệnh viện Nhi đồng 2", "Bệnh viện Nhi đồng Thành phố", "Bệnh viện Hùng Vương", 
+            "Bệnh viện Thống Nhất", "Bệnh viện Quân y 175", "Bệnh viện Bình Dân", "Bệnh viện Phạm Ngọc Thạch", "Bệnh viện Nhân dân Gia Định",
+            "Bệnh viện Trưng Vương", "Bệnh viện Nguyễn Tri Phương",
+            "Bệnh viện Đà Nẵng", "Bệnh viện C Đà Nẵng", "Bệnh viện Hoàn Mỹ Đà Nẵng", "Bệnh viện Phụ sản - Nhi Đà Nẵng", "Bệnh viện Ung bướu Đà Nẵng",
+            "Bệnh viện Trung ương Huế", "Bệnh viện Trường Đại học Y Dược Huế", 
+            "Bệnh viện Đa khoa tỉnh Khánh Hòa", "Bệnh viện Đa khoa tỉnh Thanh Hóa", "Bệnh viện Hữu nghị Đa khoa Nghệ An",
+            "Bệnh viện Đa khoa Trung ương Cần Thơ", "Bệnh viện Phụ sản TP. Cần Thơ", "Bệnh viện Nhi đồng Cần Thơ",
+            "Bệnh viện Đa khoa Đồng Nai", "Bệnh viện Đa khoa Thống Nhất (Đồng Nai)", 
+            "Bệnh viện Đa khoa tỉnh Bình Dương", "Bệnh viện Đa khoa vùng Tây Nguyên (Đắk Lắk)",
+            "Bệnh viện Hữu nghị Việt Tiệp (Hải Phòng)", "Bệnh viện Trẻ em Hải Phòng", "Bệnh viện Phụ sản Hải Phòng", 
+            "Bệnh viện Đa khoa tỉnh Quảng Ninh", "Bệnh viện Bãi Cháy", "Bệnh viện Đa khoa tỉnh Bắc Ninh",
+            "Hệ thống Y tế Vinmec", "Bệnh viện Đa khoa Tâm Anh", "Bệnh viện Thu Cúc", "Bệnh viện Hồng Ngọc", 
+            "Bệnh viện FV", "Bệnh viện Quốc tế Hạnh Phúc", "Bệnh viện Hoàn Mỹ", "Bệnh viện Đa khoa Xuyên Á"
+        ];
+
+        const JD_DATABASE = [
+            {
+                names: ["bạch mai", "bach mai"],
+                name: "Bệnh viện Bạch Mai",
+                type: "Công lập hạng đặc biệt",
+                jd: "1. Trình độ: Tốt nghiệp Đại học Điều dưỡng chính quy (Không tuyển tại chức).\n2. Chứng chỉ: Bắt buộc có Chứng chỉ hành nghề khám chữa bệnh đầy đủ.\n3. Ngoại ngữ: Tiếng Anh trình độ B1 Châu Âu hoặc TOEIC 450 trở lên.\n4. Kỹ năng chuyên môn: Thành thạo quy trình cấp cứu ngừng tuần hoàn, chăm sóc bệnh nhân thở máy, lọc máu liên tục.\n5. Thái độ: Kỷ luật nghiêm, trung thực, chịu khó học hỏi, chịu áp lực cao.\n6. Thời gian: Trực đêm 24/24 theo phân công (tuần 2-3 buổi).\n7. Quyền lợi: Thu nhập tăng thêm theo hiệu suất (P4), được đào tạo chuyên sâu trong nước và quốc tế."
+            },
+            {
+                names: ["chợ rẫy", "cho ray"],
+                name: "Bệnh viện Chợ Rẫy",
+                type: "Công lập hạng đặc biệt",
+                jd: "1. Trình độ: Cử nhân Điều dưỡng hệ chính quy.\n2. Chứng chỉ: Có Chứng chỉ hành nghề (CCHN) phù hợp với phạm vi hoạt động chuyên môn.\n3. Kinh nghiệm: Ưu tiên >1 năm kinh nghiệm lâm sàng tại các bệnh viện tuyến tỉnh/thành phố.\n4. Kỹ năng: Kiểm soát nhiễm khuẩn tốt, thành thạo kỹ thuật điều dưỡng cơ bản và nâng cao.\n5. Thái độ: Tinh thần thái độ phục vụ người bệnh nghiêm túc, hòa đồng, tôn trọng đồng nghiệp.\n6. Sức khỏe: Đủ sức khỏe trực gác đêm, đi công tác tuyến khi có yêu cầu.\n7. Quyền lợi: Thưởng lễ tết, phụ cấp độc hại, cơ hội thăng tiến lên Điều dưỡng trưởng."
+            },
+            {
+                names: ["việt đức", "viet duc"],
+                name: "Bệnh viện Hữu nghị Việt Đức",
+                type: "Ngoại khoa",
+                jd: "1. Trình độ: Tốt nghiệp Cao đẳng Điều dưỡng trở lên (Ưu tiên Đại học).\n2. Chứng chỉ: Ưu tiên có chứng chỉ dụng cụ phòng mổ, gây mê hồi sức.\n3. Thể lực: Nhanh nhẹn, thể lực tốt, có thể đứng phụ mổ thời gian dài (6-8 tiếng).\n4. Kỹ năng: Thành thạo quy trình vô khuẩn tuyệt đối, nhận biết nhanh dụng cụ phẫu thuật.\n5. Kinh nghiệm: Ưu tiên ứng viên đã có kinh nghiệm phụ mổ tại các bệnh viện ngoại khoa.\n6. Áp lực: Chịu được áp lực cao của phòng mổ, không sợ máu, phản ứng nhanh.\n7. Thu nhập: Lương cứng + Thưởng theo ca mổ hấp dẫn, môi trường ngoại khoa hàng đầu."
+            },
+            {
+                names: ["vinmec", "quốc tế vinmec"],
+                name: "Hệ thống Y tế Vinmec",
+                type: "Quốc tế",
+                jd: "1. Trình độ: Tốt nghiệp Đại học Điều dưỡng trở lên.\n2. Ngoại ngữ: Tiếng Anh giao tiếp tốt (Bắt buộc) để làm việc với chuyên gia và bệnh nhân nước ngoài.\n3. Ngoại hình: Ưa nhìn, không nói ngọng, tác phong chuyên nghiệp, không có hình xăm lộ.\n4. Kỹ năng: Dịch vụ khách hàng (Customer Service) xuất sắc, kỹ năng lấy ven không đau, chăm sóc 1:1.\n5. Chứng chỉ: Có CCHN đầy đủ, ưu tiên các chứng chỉ ACLS, BLS quốc tế.\n6. Kinh nghiệm: Tối thiểu 2 năm tại các bệnh viện lớn.\n7. Quyền lợi: Môi trường làm việc 5 sao, bảo hiểm sức khỏe cao cấp, lương cạnh tranh."
+            }
+        ];
+
+        // Hàm tạo JD chuẩn 10 yếu tố
+        const generateJD = (hospitalName) => {
+            const isPrivate = hospitalName.toLowerCase().includes('vinmec') || hospitalName.toLowerCase().includes('tâm anh') || hospitalName.toLowerCase().includes('quốc tế') || hospitalName.toLowerCase().includes('tư nhân') || hospitalName.toLowerCase().includes('fv');
+            const isSpecialized = hospitalName.toLowerCase().includes('nhi') || hospitalName.toLowerCase().includes('sản') || hospitalName.toLowerCase().includes('phụ sản');
+            
+            let edu = isPrivate ? "Tốt nghiệp Đại học Điều dưỡng trở lên." : "Tốt nghiệp Cao đẳng Điều dưỡng trở lên (Ưu tiên Đại học).";
+            let cert = "Bắt buộc có Chứng chỉ hành nghề (CCHN) khám chữa bệnh còn hiệu lực.";
+            let exp = isPrivate ? "Tối thiểu 2 năm kinh nghiệm tại các bệnh viện lớn." : "Ưu tiên ứng viên có kinh nghiệm, chấp nhận sinh viên mới ra trường loại Giỏi.";
+            let hardSkill = "Thành thạo quy trình điều dưỡng cơ bản: Tiêm, truyền, thay băng, lấy dấu hiệu sinh tồn. Sử dụng tốt tin học văn phòng.";
+            if (isSpecialized) hardSkill += " Có kỹ năng chăm sóc đặc thù (Nhi/Sản) là lợi thế lớn.";
+            let softSkill = isPrivate ? "Kỹ năng giao tiếp xuất sắc, tư duy dịch vụ (Service Mindset), thái độ ân cần." : "Trung thực, cẩn thận, chịu khó, tuân thủ kỷ luật bệnh viện.";
+            let lang = isPrivate ? "Tiếng Anh giao tiếp tốt (Bắt buộc)." : "Tiếng Anh trình độ cơ bản (Đọc hiểu tài liệu).";
+            let health = "Sức khỏe tốt (Loại I, II), không mắc bệnh truyền nhiễm. Ngoại hình cân đối, không dị tật.";
+            let time = "Làm việc theo ca kíp, sẵn sàng trực đêm và làm thêm giờ khi có yêu cầu.";
+            let demo = "Nam/Nữ, tuổi dưới 35.";
+            let benefit = isPrivate ? "Môi trường làm việc hiện đại, lương thưởng cạnh tranh, bảo hiểm sức khỏe cao cấp." : "Thu nhập ổn định theo quy định nhà nước + thu nhập tăng thêm, được đào tạo liên tục.";
+
+            return `1. Trình độ học vấn: ${edu}\n2. Chứng chỉ hành nghề: ${cert}\n3. Kinh nghiệm làm việc: ${exp}\n4. Kỹ năng chuyên môn: ${hardSkill}\n5. Thái độ & Kỹ năng mềm: ${softSkill}\n6. Ngoại ngữ & Tin học: ${lang}\n7. Sức khỏe & Ngoại hình: ${health}\n8. Thời gian làm việc: ${time}\n9. Độ tuổi & Giới tính: ${demo}\n10. Quyền lợi: ${benefit}`;
+        };
+
+        // --- COMPONENTS ---
+        const IntroBlog = () => (
+            <div className="glass-panel p-8 rounded-2xl mb-8 animate-fade-in bg-gradient-to-br from-white to-sky-50 border-l-4 border-sky-500 shadow-md">
+                <div className="flex flex-col md:flex-row items-start gap-6">
+                    <div className="bg-white p-4 rounded-full text-sky-600 shadow-lg border border-sky-100 hidden md:block"><Icon name="Star" size={40} className="text-yellow-500" /></div>
+                    <div className="flex-1">
+                        <h2 className="text-2xl font-bold text-sky-900 mb-3 flex items-center gap-2"><span className="text-3xl">✨</span> Làm thế nào để viết CV phù hợp với Nhà tuyển dụng?</h2>
+                        <div className="text-gray-700 text-base leading-relaxed space-y-3">
+                            <p className="font-medium text-red-600 bg-red-50 p-3 rounded-lg border border-red-100"><strong>Thực trạng đáng báo động:</strong> Hơn 70% sinh viên Điều dưỡng mới ra trường bị loại hồ sơ do không biết cách trình bày năng lực lâm sàng.</p>
+                            <p>Nhà tuyển dụng Y tế cần thấy: <strong>Kỹ thuật cụ thể</strong>, <strong>Khả năng trực đêm</strong> và <strong>Y đức</strong>. Trang web này giúp bạn chuẩn hóa CV theo đúng chuẩn bệnh viện.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const JobMatcher = ({ onSelectJob }) => {
+            const [filter, setFilter] = useState({ location: "", specialty: "", experience: "new", nightShift: "yes", salary: "" });
+            const [suggestions, setSuggestions] = useState([]);
+            const [warning, setWarning] = useState(null);
+
+            const handleSearch = () => {
+                setWarning(null); setSuggestions([]);
+                const cityName = filter.location;
+                if (!cityName) return alert("Vui lòng chọn khu vực làm việc!");
+                const userSalary = parseInt(filter.salary) || 0;
+                
+                const isMajor = ["Hà Nội", "TP. Hồ Chí Minh", "Đà Nẵng"].includes(cityName);
+                let maxRealistic = isMajor ? (filter.experience === 'new' ? 15 : 25) : 12;
+                
+                if (userSalary > maxRealistic) {
+                    setWarning({
+                        message: `Mức lương ${userSalary}.000.000 VNĐ là chưa khả thi tại ${cityName}.`,
+                        detail: "Với kinh nghiệm hiện tại, thị trường thường chi trả thấp hơn. Hãy cân nhắc các phúc lợi khác ngoài lương cứng."
+                    });
+                    return;
+                }
+
+                let hospitals = REAL_HOSPITALS_DB[cityName] || [`Bệnh viện Đa khoa ${cityName}`, `Trung tâm Y tế ${cityName}`];
+                const specObj = SPECIALTIES.find(s => s.id === filter.specialty);
+                const specName = specObj ? specObj.name.split(':')[0] : "Điều dưỡng";
+
+                const results = hospitals.slice(0, 5).map(h => ({
+                    name: h,
+                    type: h.toLowerCase().includes('vinmec') ? "Tư nhân" : "Công lập",
+                    jd: `Tuyển ${specName}. Yêu cầu: Tốt nghiệp chuyên ngành. Trực đêm theo phân công.`,
+                    salary: userSalary > 0 ? `~${userSalary}.000.000 VNĐ` : "Thỏa thuận"
+                }));
+                setSuggestions(results);
+            };
+
+            return (
+                <div className="h-full flex flex-col">
+                    <h3 className="text-sky-800 font-bold mb-2 flex items-center gap-2"><Icon name="MapPin" className="text-sky-500" /> Tìm nơi làm việc phù hợp</h3>
+                    <p className="text-sm text-gray-600 mb-4 italic">"Nếu bạn vẫn chưa tìm được bến đỗ ưng ý, hãy để chúng tôi hỗ trợ gợi ý những nơi phù hợp nhất với năng lực của bạn..."</p>
+                    <div className="space-y-3 bg-sky-50 p-4 rounded-xl border border-sky-100">
+                        <div><label className="text-xs font-bold text-sky-700">Khu vực</label><select className="w-full mt-1 p-2 rounded border text-sm" value={filter.location} onChange={e => setFilter({...filter, location: e.target.value})}><option value="">-- Chọn Tỉnh/Thành --</option>{PROVINCES.map(p => <option key={p} value={p}>{p}</option>)}</select></div>
+                        <div><label className="text-xs font-bold text-sky-700">Chuyên khoa</label><select className="w-full mt-1 p-2 rounded border text-sm" value={filter.specialty} onChange={e => setFilter({...filter, specialty: e.target.value})}><option value="">-- Chọn chuyên khoa --</option>{SPECIALTIES.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}</select></div>
+                        <div className="grid grid-cols-2 gap-2"><div><label className="text-xs font-bold text-sky-700">Kinh nghiệm</label><select className="w-full mt-1 p-2 rounded border text-sm" value={filter.experience} onChange={e => setFilter({...filter, experience: e.target.value})}><option value="new">Mới ra trường</option><option value="1-3">1-3 năm</option><option value=">3">> 3 năm</option></select></div><div><label className="text-xs font-bold text-sky-700">Trực đêm</label><select className="w-full mt-1 p-2 rounded border text-sm" value={filter.nightShift} onChange={e => setFilter({...filter, nightShift: e.target.value})}><option value="yes">Có thể</option><option value="no">Không thể</option></select></div></div>
+                        <div>
+                            <label className="text-xs font-bold text-sky-700">Mức lương mong muốn</label>
+                            <div className="mt-1 flex items-center">
+                                <span className="p-2 bg-white border border-r-0 rounded-l text-gray-500 font-bold text-sm">[</span>
+                                <input type="text" className="w-16 p-2 text-center border-t border-b border-gray-200 text-sm font-bold text-sky-800 outline-none" placeholder="___" maxLength={3} value={filter.salary} onChange={(e) => setFilter({...filter, salary: e.target.value.replace(/[^0-9]/g, '')})}/>
+                                <div className="flex-1 p-2 rounded-r border border-l-0 text-sm bg-white text-gray-600 font-medium">.000.000 VNĐ</div>
+                            </div>
+                        </div>
+                        <button onClick={handleSearch} className="w-full bg-sky-600 text-white py-2 rounded font-bold hover:bg-sky-700 mt-2">Tìm kiếm</button>
+                    </div>
+                    {warning && <div className="mt-4 p-3 bg-red-50 text-red-700 text-sm rounded border-l-4 border-red-500">{warning.message} <br/><span className="text-xs">{warning.detail}</span></div>}
+                    <div className="mt-4 flex-1 overflow-y-auto space-y-2">{suggestions.map((h, i) => <div key={i} className="bg-white p-3 rounded border shadow-sm"><div className="font-bold text-sky-800">{h.name}</div><div className="text-xs text-gray-500">{h.type} - {h.salary}</div></div>)}</div>
+                </div>
+            );
+        };
+
+        const InterviewPractice = () => {
+            const [isOpen, setIsOpen] = useState(false);
+            const [currentQ, setCurrentQ] = useState(0); 
+            const [score, setScore] = useState(0); 
+            const [showResult, setShowResult] = useState(false); 
+            const [selected, setSelected] = useState(null);
+            
+            const QUESTIONS = [
+                { id: 1, question: "Khi thực hiện y lệnh dùng thuốc, '5 Đúng' bao gồm những gì?", options: ["A. Đúng người bệnh, đúng thuốc, đúng liều, đúng đường dùng, đúng thời gian.", "B. Sai"], correct: 0, explain: "Nguyên tắc vàng." },
+                { id: 2, question: "Bệnh nhân ngã trong nhà vệ sinh, hành động ĐẦU TIÊN?", options: ["A. Đỡ dậy", "B. Đánh giá chấn thương tại chỗ", "C. Gọi bác sĩ"], correct: 1, explain: "An toàn là trên hết." },
+                { id: 3, question: "Quy trình rửa tay thường quy?", options: ["A. 10s", "B. 20-30s", "C. 1 phút"], correct: 1, explain: "Theo BYT." },
+                // ... (Thêm câu hỏi nếu cần)
+            ];
+            
+            const handleAnswer = (idx) => { if(selected !== null) return; setSelected(idx); if(idx === QUESTIONS[currentQ].correct) setScore(score+1); };
+            const next = () => { if(currentQ < QUESTIONS.length-1) { setCurrentQ(currentQ+1); setSelected(null); } else setShowResult(true); };
+            const restart = () => { setCurrentQ(0); setScore(0); setShowResult(false); setSelected(null); };
+            
+            if(!isOpen) return <div className="text-center my-6"><button onClick={()=>setIsOpen(true)} className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:scale-105 transition flex items-center gap-2 mx-auto"><Icon name="Quiz"/> BẮT ĐẦU LUYỆN TẬP PHỎNG VẤN (30 CÂU)</button></div>;
+
+            if(showResult) return <div className="glass-panel p-6 text-center"><div className="text-2xl font-bold text-sky-600">Điểm: {score}/{QUESTIONS.length}</div><p className="text-gray-600">Bạn đã hoàn thành bài luyện tập!</p><button onClick={restart} className="mt-4 px-4 py-2 bg-sky-600 text-white rounded">Làm lại</button><button onClick={()=>setIsOpen(false)} className="mt-4 ml-2 px-4 py-2 text-gray-500">Đóng</button></div>;
+            
+            const q = QUESTIONS[currentQ];
+            return (
+                <div className="glass-panel p-6 mt-6 border-t-4 border-purple-500">
+                    <div className="flex justify-between mb-4"><span className="font-bold text-purple-700 text-lg">Câu hỏi phỏng vấn</span><button onClick={()=>setIsOpen(false)} className="text-red-500 font-bold">Đóng</button></div>
+                    <div className="flex justify-between mb-2"><span className="font-bold text-purple-700">Câu {currentQ+1}</span></div>
+                    <h4 className="font-bold mb-4">{q.question}</h4>
+                    <div className="space-y-2">{q.options.map((o,i)=><button key={i} onClick={()=>handleAnswer(i)} disabled={selected!==null} className={`w-full text-left p-3 rounded border ${selected===i?(i===q.correct?'bg-green-100':'bg-red-100'):''}`}>{o}</button>)}</div>
+                    {selected!==null && <button onClick={next} className="mt-4 w-full py-2 bg-purple-600 text-white rounded">Tiếp theo</button>}
+                </div>
+            );
+        };
+
+        const FileUpload = ({ onTextExtracted }) => {
+            const fileInputRef = useRef(null);
+            const cameraInputRef = useRef(null);
+            
+            const handleFile = async (e) => {
+                const file = e.target.files[0];
+                if(file) {
+                    let text = "";
+                    if(file.type.startsWith('image/')) {
+                        text = `[ẢNH/CAMERA] ${file.name}`; // Giả lập nội dung từ ảnh
+                        onTextExtracted(text, file.name);
+                        return;
+                    }
+                    if(window.pdfjsLib && file.name.endsWith('.pdf')) {
+                        try {
+                            const arrayBuffer = await file.arrayBuffer();
+                            const pdf = await window.pdfjsLib.getDocument(arrayBuffer).promise;
+                            for(let i=1; i<=pdf.numPages; i++) {
+                                const page = await pdf.getPage(i);
+                                const content = await page.getTextContent();
+                                text += content.items.map(item => item.str).join(" ") + "\n";
+                            }
+                        } catch(e) { text = ""; }
+                    } else {
+                        text = "Nội dung Text (Giả lập): Nguyễn Văn A. Cử nhân Điều dưỡng. Kinh nghiệm: 2 năm tại BV tỉnh. Kỹ năng: Tiêm truyền, Chăm sóc bệnh nhân."; 
+                    }
+                    onTextExtracted(text, file.name);
+                }
+            };
+
+            return (
+                <div className="border-2 border-dashed border-sky-300 rounded-xl p-8 hover:bg-sky-50 transition text-center mb-4">
+                    <div className="flex justify-center gap-4">
+                        <div onClick={() => fileInputRef.current.click()} className="cursor-pointer flex flex-col items-center hover:text-sky-600 transition">
+                            <div className="bg-white p-3 rounded-full text-sky-600 shadow-sm border border-sky-100 mb-2"><Icon name="Upload" size={24}/></div>
+                            <span className="text-sm font-bold text-sky-700">Tải File (PDF/Word)</span>
+                        </div>
+                        <div className="w-px bg-sky-200 h-16"></div>
+                        <div onClick={() => cameraInputRef.current.click()} className="cursor-pointer flex flex-col items-center hover:text-sky-600 transition">
+                            <div className="bg-white p-3 rounded-full text-sky-600 shadow-sm border border-sky-100 mb-2"><Icon name="Camera" size={24}/></div>
+                            <span className="text-sm font-bold text-sky-700">Chụp Ảnh CV</span>
+                        </div>
+                    </div>
+                    <input ref={fileInputRef} type="file" className="hidden" accept=".pdf,.doc,.docx,.txt,image/*" onChange={handleFile} />
+                    <input ref={cameraInputRef} type="file" className="hidden" accept="image/*" capture="environment" onChange={handleFile} />
+                </div>
+            );
+        };
+
+        const MockAI = {
+            analyzeCV: (cvText, jdText) => {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        const text = cvText.toLowerCase();
+                        const jd = jdText.toLowerCase();
+                        let score = 50;
+                        let strengths = [];
+                        let weaknesses = [];
+                        let suggestions = [];
+
+                        // Logic 1-1 Comparison (Phân tích sâu)
+                        const requirements = [
+                            { key: ['đại học', 'cao đẳng', 'cử nhân'], label: 'Trình độ học vấn', category: 'bằng cấp' },
+                            { key: ['chứng chỉ', 'cchn'], label: 'Chứng chỉ hành nghề', category: 'bằng cấp' },
+                            { key: ['ngoại ngữ', 'tiếng anh', 'toeic'], label: 'Ngoại ngữ', category: 'kỹ năng' },
+                            { key: ['tin học', 'máy tính'], label: 'Tin học văn phòng', category: 'kỹ năng' },
+                            { key: ['kinh nghiệm', 'năm'], label: 'Kinh nghiệm làm việc', category: 'kinh nghiệm' },
+                            { key: ['kỹ năng', 'cấp cứu', 'tiêm', 'máy thở'], label: 'Kỹ năng chuyên môn', category: 'kỹ năng' },
+                            { key: ['thái độ', 'trung thực', 'áp lực'], label: 'Thái độ/Phẩm chất', category: 'thái độ' },
+                            { key: ['sức khỏe', 'ngoại hình'], label: 'Sức khỏe/Ngoại hình', category: 'sức khỏe' },
+                            { key: ['thời gian', 'trực đêm', 'ca kíp'], label: 'Thời gian làm việc', category: 'thái độ' },
+                            { key: ['tuổi', 'nam', 'nữ'], label: 'Độ tuổi/Giới tính', category: 'thông tin cá nhân' }
+                        ];
+
+                        requirements.forEach(req => {
+                            // Check if JD requires this
+                            const jdNeeds = req.key.some(k => jd.includes(k));
+                            if (jdNeeds) {
+                                // Check if CV satisfies it
+                                const cvHas = req.key.some(k => text.includes(k));
+                                if (cvHas) {
+                                    strengths.push(`✅ ${req.label}: Bạn đã có thông tin này trong CV, phù hợp với yêu cầu.`);
+                                    score += 10;
+                                } else {
+                                    weaknesses.push(`❌ ${req.label}: JD yêu cầu nhưng CV của bạn chưa thấy đề cập.`);
+                                    suggestions.push(`👉 Bổ sung mục "${req.label}": Hãy ghi rõ (Ví dụ: "Có CCHN", "Sẵn sàng trực đêm"). Nếu chưa có, hãy thể hiện sự cam kết học hỏi.`);
+                                    score -= 5;
+                                }
+                            }
+                        });
+
+                        // Logic bổ sung
+                        if (text.includes("ảnh/camera")) {
+                            weaknesses.push("CV dạng ảnh: Hệ thống ATS khó đọc tự động.");
+                            suggestions.push("Nên chuyển nội dung sang file PDF để hệ thống ATS của bệnh viện có thể quét từ khóa tốt hơn.");
+                        }
+
+                        if (!text.includes("@") && !text.includes("sđt")) {
+                            weaknesses.push("Thiếu thông tin liên hệ (Email/SĐT).");
+                            suggestions.push("Bắt buộc thêm Email và Số điện thoại ở đầu trang.");
+                        }
+
+                        score = Math.min(100, Math.max(10, score));
+                        let summary = score > 75 ? "Hồ sơ Tiềm năng" : "Cần bổ sung thông tin";
+
+                        resolve({
+                            score,
+                            summary,
+                            strengths: strengths.length ? strengths : ["Cấu trúc cơ bản tạm ổn"],
+                            weaknesses: weaknesses.length ? weaknesses : ["Chưa làm nổi bật được năng lực so với JD"],
+                            suggestions: suggestions.length ? suggestions : ["Rà soát lại toàn bộ CV theo JD."]
+                        });
+                    }, 2000);
+                });
+            }
+        };
+
+        const App = () => {
+            const [view, setView] = useState('input');
+            const [cvText, setCvText] = useState('');
+            const [jdText, setJdText] = useState('');
+            const [result, setResult] = useState(null);
+            const [fileName, setFileName] = useState('');
+            const [quickHospitalSearch, setQuickHospitalSearch] = useState('');
+            const [hospitalSuggestions, setHospitalSuggestions] = useState([]);
+
+            const handleAnalyze = async () => {
+                if(!fileName && !cvText) return alert("Vui lòng tải CV lên!");
+                if(!jdText) return alert("Vui lòng nhập JD hoặc chọn bệnh viện để so sánh!");
+                setView('analyzing');
+                const res = await MockAI.analyzeCV(cvText, jdText);
+                setResult(res);
+                setView('report');
+            };
+            
+            const handleHospitalInputChange = (e) => {
+                const val = e.target.value;
+                setQuickHospitalSearch(val);
+                if(val.length > 0) {
+                    const filtered = VIETNAM_HOSPITALS.filter(h => h.toLowerCase().includes(val.toLowerCase()));
+                    setHospitalSuggestions(filtered.slice(0, 5));
+                } else {
+                    setHospitalSuggestions([]);
+                }
+            };
+
+            const selectHospital = (hospitalName) => {
+                setQuickHospitalSearch(hospitalName);
+                setHospitalSuggestions([]);
+                
+                // Tự động tạo JD 10 yếu tố
+                setJdText(generateJD(hospitalName));
+            };
+
+            const handleManualSearch = () => {
+                // Nếu người dùng bấm tìm mà không chọn gợi ý
+                if (!quickHospitalSearch.trim()) return;
+                // Kiểm tra xem tên có trong DB không
+                const exists = VIETNAM_HOSPITALS.some(h => h.toLowerCase() === quickHospitalSearch.toLowerCase());
+                if (exists) {
+                     setJdText(generateJD(quickHospitalSearch));
+                } else {
+                    alert("Không tìm thấy bệnh viện này trong hệ thống. Bạn vui lòng tự nhập nội dung JD vào ô bên dưới để đảm bảo chính xác.");
+                    setJdText(""); // Clear để người dùng nhập
+                }
+            };
+
+            const scrollToSection = (id) => {
+                const element = document.getElementById(id);
+                if (element) element.scrollIntoView({ behavior: 'smooth' });
+            };
+
+            return (
+                <div className="min-h-screen pb-12 flex flex-col">
+                    <nav className="bg-white/90 backdrop-blur sticky top-0 z-50 border-b border-sky-100 px-6 py-3 shadow-sm">
+                        <div className="max-w-6xl mx-auto flex justify-between items-center">
+                            <div className="flex items-center gap-2 text-2xl font-black text-sky-700">
+                                <Icon name="MedicalCross" size={24} className="text-sky-600"/> CV Master <span className="text-sky-400">AI</span>
+                            </div>
+                            <div className="hidden md:flex gap-4 text-sm font-bold text-gray-600">
+                                <button onClick={() => window.scrollTo({top:0, behavior:'smooth'})}>Trang chủ</button>
+                                <button onClick={() => scrollToSection('upload-area')}>Phân tích</button>
+                                <button onClick={() => scrollToSection('interview-practice')}>Luyện Phỏng vấn</button>
+                                <button onClick={() => scrollToSection('tools-area')}>Công cụ</button>
+                            </div>
+                        </div>
+                    </nav>
+
+                    <main className="max-w-6xl mx-auto p-6 mt-2 flex-grow w-full">
+                        {view === 'input' && (
+                            <div className="animate-fade-in">
+                                <div className="text-center mb-6">
+                                    <h1 className="text-3xl font-extrabold text-sky-900 mb-2">Cách Viết CV <span className="medical-gradient-text">Chinh Phục Nhà Tuyển Dụng</span></h1>
+                                    <p className="text-sky-600">Công cụ tối ưu hóa hồ sơ ứng viên Y tế</p>
+                                </div>
+                                <IntroBlog />
+
+                                <div className="flex flex-col gap-6">
+                                    {/* AREA 1: CV & JD & Analyze */}
+                                    <div id="upload-area" className="glass-panel p-6 rounded-2xl">
+                                        <h3 className="text-xl font-bold text-sky-900 mb-4 flex items-center gap-2">
+                                            <Icon name="FileText" className="text-sky-500"/> Hồ sơ & Yêu cầu (JD)
+                                        </h3>
+                                        
+                                        <div className="grid md:grid-cols-2 gap-6">
+                                            {/* Left: CV Upload Only */}
+                                            <div className="flex-1 flex flex-col gap-3">
+                                                <label className="font-bold text-gray-700 text-sm">1. Tải lên CV của bạn (File/Ảnh/Camera)</label>
+                                                <FileUpload onTextExtracted={(txt, name) => { setCvText(txt); setFileName(name); }} />
+                                                {fileName && <div className="text-xs text-green-700 bg-green-50 p-2 rounded border border-green-200 text-center"><Icon name="Check" size={12}/> Đã nhận hồ sơ: {fileName}</div>}
+                                                <textarea className="hidden" value={cvText} onChange={e => setCvText(e.target.value)}></textarea>
+                                            </div>
+
+                                            {/* Right: JD Input & Search */}
+                                            <div className="flex-1 flex flex-col gap-3 relative">
+                                                <label className="font-bold text-gray-700 text-sm">2. Tra cứu & Nhập JD Bệnh viện</label>
+                                                <div className="flex-1 border border-red-200 rounded-xl p-3 bg-red-50/30 flex flex-col gap-3 relative">
+                                                    <div className="relative">
+                                                        <input 
+                                                            type="text" 
+                                                            className="w-full p-2 rounded border border-red-300 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
+                                                            placeholder="Nhập tên bệnh viện (VD: Bạch Mai)..."
+                                                            value={quickHospitalSearch}
+                                                            onChange={handleHospitalInputChange}
+                                                        />
+                                                         <button 
+                                                            onClick={handleManualSearch}
+                                                            className="absolute right-1 top-1 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-bold transition"
+                                                        >
+                                                            Lấy JD
+                                                        </button>
+
+                                                        {/* Autocomplete Suggestions */}
+                                                        {hospitalSuggestions.length > 0 && (
+                                                            <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg z-10 mt-1 max-h-40 overflow-y-auto">
+                                                                {hospitalSuggestions.map((hospitalName, idx) => (
+                                                                    <div 
+                                                                        key={idx}
+                                                                        onClick={() => selectHospital(hospitalName)}
+                                                                        className="p-2 hover:bg-red-50 cursor-pointer text-sm text-gray-700 border-b border-gray-100 last:border-0"
+                                                                    >
+                                                                        {hospitalName}
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <textarea 
+                                                        className="flex-1 w-full p-3 rounded border border-red-200 text-sm bg-white" 
+                                                        placeholder="Nội dung JD (gồm 10 yếu tố: Trình độ, Chứng chỉ, Kinh nghiệm, Kỹ năng, Thái độ...) sẽ hiển thị ở đây..." 
+                                                        value={jdText} 
+                                                        onChange={(e) => setJdText(e.target.value)}
+                                                        style={{minHeight: '150px'}}
+                                                    ></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-8 flex justify-center">
+                                            <button onClick={handleAnalyze} className="group bg-gradient-to-r from-sky-600 to-blue-700 text-white px-10 py-4 rounded-full font-bold shadow-xl hover:shadow-2xl hover:-translate-y-1 transition flex items-center gap-3 text-lg">
+                                                <Icon name="BrainCircuit" size={24} className="group-hover:animate-pulse"/> PHÂN TÍCH & SO SÁNH NGAY
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Interview Practice Section (Hidden behind button) */}
+                                    <div id="interview-practice">
+                                        <InterviewPractice />
+                                    </div>
+
+                                    {/* AREA 2: Tools (Job Matcher) */}
+                                    <div id="tools-area" className="glass-panel p-6 rounded-2xl">
+                                        <JobMatcher onSelectJob={(job) => { setJdText(job.jd); scrollTo('upload-area'); }} />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {view === 'analyzing' && (
+                            <div className="flex flex-col items-center justify-center h-[50vh] animate-fade-in">
+                                <div className="w-20 h-20 border-4 border-sky-200 border-t-sky-600 rounded-full animate-spin mb-6"></div>
+                                <h3 className="text-xl font-bold text-sky-900">Đang phân tích hồ sơ...</h3>
+                                <p className="text-gray-500 mt-2">So sánh chi tiết CV của bạn với JD bệnh viện...</p>
+                            </div>
+                        )}
+
+                        {view === 'report' && result && (
+                            <div className="animate-fade-in space-y-6 max-w-4xl mx-auto">
+                                <button onClick={()=>setView('input')} className="text-sky-600 font-bold hover:underline flex items-center gap-1">← Quay lại</button>
+                                <div className="glass-panel p-8 rounded-2xl text-center border-t-8 border-sky-500 shadow-2xl bg-white">
+                                    <div className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">Đánh giá mức độ phù hợp</div>
+                                    <div className="text-7xl font-black text-sky-600 mb-2">{result.score}/100</div>
+                                    <div className="font-bold text-xl text-gray-800">{result.summary}</div>
+                                </div>
+                                
+                                <div className="grid md:grid-cols-3 gap-6">
+                                    <div className="bg-white p-6 rounded-2xl border-l-4 border-green-500 shadow-sm">
+                                        <h4 className="font-bold text-green-700 text-lg mb-4 flex items-center gap-2"><Icon name="Check" size={20}/> Ưu điểm (Đã có trong JD)</h4>
+                                        <ul className="space-y-3">
+                                            {result.strengths.map((s,i)=>(
+                                                <li key={i} className="text-sm text-gray-700 bg-green-50 p-3 rounded-lg">
+                                                    {s}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+
+                                    <div className="bg-white p-6 rounded-2xl border-l-4 border-red-500 shadow-sm">
+                                        <h4 className="font-bold text-red-700 text-lg mb-4 flex items-center gap-2"><Icon name="XCircle" size={20}/> Nhược điểm (Thiếu so với JD)</h4>
+                                        <ul className="space-y-3">
+                                            {result.weaknesses.map((w,i)=>(
+                                                <li key={i} className="text-sm text-gray-700 bg-red-50 p-3 rounded-lg">
+                                                    {w}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+
+                                    <div className="bg-gradient-to-b from-blue-50 to-white p-6 rounded-2xl border border-blue-100 shadow-lg">
+                                        <h4 className="font-bold text-blue-800 text-lg mb-4 flex items-center gap-2"><Icon name="Edit" size={20}/> Lời khuyên từ HR</h4>
+                                        <ul className="space-y-3">
+                                            {result.suggestions.map((s,i)=>(
+                                                <li key={i} className="text-sm text-gray-700 flex gap-2">
+                                                    <span className="text-blue-500 font-bold">👉</span>
+                                                    {s}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </main>
+
+                    <footer className="mt-8 py-6 bg-white border-t border-sky-100 text-center text-gray-500 text-sm">
+                        <div className="max-w-4xl mx-auto px-4">
+                            <p className="font-bold text-sky-800 mb-1">Dự án phát triển bởi Sinh viên Điều dưỡng & Gemini AI</p>
+                            <p>Cảm ơn bạn đã sử dụng. Chúc bạn sớm tìm được công việc ưng ý!</p>
+                        </div>
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
